@@ -1,6 +1,6 @@
 #pragma once
 #include"cocos2d.h"
-class Stick {
+class Stick:public cocos2d::DrawNode {
 	const float m_enLongatingSpeed = 120.0f;
 	const float m_maxLength = 500;
 	float m_length;
@@ -14,13 +14,14 @@ class Stick {
 		DONE
 	};
 	StickAnimationStates m_state = StickAnimationStates::START;
-	cocos2d::Layer*m_pLayer;
-	cocos2d::DrawNode*m_drawer;
+	Stick();
+
 public:
-	Stick(cocos2d::Layer*pLayer);
+	CREATE_FUNC(Stick);
+	bool init()override;
 	~Stick();
 
-	inline cocos2d::DrawNode*getDrawer()const { return m_drawer; }
+	inline cocos2d::DrawNode*getDrawer() { return this; }
 	inline const bool&hasFell()const { return (m_state == StickAnimationStates::FELL); }
 	inline const bool&hasEnlogated()const { return (m_state == StickAnimationStates::ENLONGATED); }
 	inline const float&getLength()const { return m_length; }

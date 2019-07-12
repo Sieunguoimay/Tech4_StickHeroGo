@@ -34,7 +34,7 @@ private:
 
 	Background*m_pBackground;
 	
-	
+	bool m_cameraMoving = false;
 	
 	CREATE_FUNC(GameScene);
 

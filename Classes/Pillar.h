@@ -11,7 +11,7 @@ public:
 	bool checkOnCamera(const cocos2d::Size& visibleSize, const cocos2d::Vec2& camPos);
 	inline bool hasSpawnedOne() { return m_spawnedOne; }
 	inline void setHasSpawnedOne(bool spawned) { m_spawnedOne = spawned; }
-	inline Stick&getStick() { return m_stick; }
+	inline Stick*getStick() { return m_pStick; }
 private:
 	bool m_spawnedOne = false;
 	cocos2d::Layer*m_pLayer;
@@ -19,6 +19,6 @@ private:
 	cocos2d::PhysicsBody*m_pillarBody;
 
 	//on each pillar stands a stick
-	Stick m_stick;
+	Stick*m_pStick;
 
 };
