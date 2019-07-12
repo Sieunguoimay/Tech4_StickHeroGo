@@ -1,6 +1,7 @@
 #pragma once
 #include"cocos2d.h"
 #include"Stick.h"
+
 class Pillar {
 public:
 	Pillar(cocos2d::Layer*pLayer, float randValue = 1.0f);

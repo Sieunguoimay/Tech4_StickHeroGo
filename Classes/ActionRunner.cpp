@@ -5,15 +5,23 @@ void ActionRunner::cleanUp()
 {
 	delete s_instance;
 	s_instance = nullptr;
-	CCLOG("Deleted ActionRunner");
 }
 ActionRunner * ActionRunner::getInstance()
 {
 	if (s_instance == nullptr) {
-		CCLOG("Created ActionRunner");
 		s_instance = new ActionRunner();
 	}
 	return s_instance;
+}
+
+
+
+ActionRunner::~ActionRunner()
+{
+	for (auto it = m_actions.first(); it != m_actions.tail; it = it->next) {
+		delete it->data;
+	}
+	CCLOG("Deleted ActionRunner");
 }
 void ActionRunner::update(float deltaTime)
 {
@@ -27,16 +35,18 @@ void ActionRunner::update(float deltaTime)
 	}
 }
 
-MyAction * MoveToTarget::create(float duration, const cocos2d::Vec2 & target, cocos2d::Node * node)
-{
 
-	auto action = new MoveToTarget();
-	action->m_duration = duration;
-	action->m_target = target;
-	action->m_pNode = node;
-	action->m_oldPos = node->getPosition();
-	return action;
-}
+
+
+
+
+
+
+
+MoveToTarget::MoveToTarget(float duration, const cocos2d::Vec2 & target, cocos2d::Node * node)
+	:BaseAction(duration,0,"MoveToTarget")
+	,m_target(target), m_pNode(node),m_oldPos(node->getPosition())
+{}
 
 void MoveToTarget::run(float a)
 {
@@ -44,26 +54,28 @@ void MoveToTarget::run(float a)
 	m_pNode->setPosition(m_oldPos + b*(m_target - m_oldPos));
 }
 
+
+
+
+
+
+
+
+RotateByAmount::RotateByAmount(float duration, const float & amount, cocos2d::Node * node, std::function<void()>callback)
+	:BaseAction(duration,0,"RotateByAmount")
+	,m_amount(amount)
+	,m_oldAngle(node->getRotation())
+	,m_pNode(node)
+	,m_callback(callback)
+{}
+
 RotateByAmount::~RotateByAmount()
 {
-	if (m_callback!= nullptr) {
+	if (m_callback != nullptr) {
 		m_callback();
 		m_callback = nullptr;
 	}
 }
-
-MyAction * RotateByAmount::create(float duration, const float & amount, cocos2d::Node * node, std::function<void()>callback)
-{
-	auto action = new RotateByAmount();
-	action->m_timer = 0;
-	action->m_duration = duration;
-	action->m_amount = amount;
-	action->m_oldAngle = node->getRotation();
-	action->m_pNode = node;
-	action->m_callback = callback;
-	return action;
-}
-
 void RotateByAmount::run(float a)
 {
 	float b = bezier4(0.0f, 0.0f, 0.0f, 1.0, a);

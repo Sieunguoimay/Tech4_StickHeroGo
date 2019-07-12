@@ -29,7 +29,7 @@ void Stick::update(float deltaTime)
 	}
 	else if (m_state == ENLONGATED) {
 		m_state = FALLING;
-		ActionRunner::getInstance()->addAction(RotateByAmount::create(1.0f,90.0f,m_drawer,	
+		ActionRunner::getInstance()->addAction(new RotateByAmount(0.5f,90.0f,m_drawer,	
 			[this]() {
 				if (m_state == FALLING)
 					m_state = FELL;

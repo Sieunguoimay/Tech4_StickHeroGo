@@ -21,6 +21,7 @@ public:
 		tail = new ListNode<T>(head, NULL, (T)0);
 		head->next = tail;
 		n = 0;
+		std::cout << "Double Linked List Created\n";
 	}
 	~List() {
 		//what if type of data is a dynamic pointer
@@ -31,6 +32,7 @@ public:
 		head = NULL;
 		tail = NULL;
 		n = 0;
+		std::cout << "Double Linked List Destroyed\n";
 	}
 
 	ListNode<T>* erase(ListNode<T>*pointer) {

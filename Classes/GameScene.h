@@ -3,13 +3,14 @@
 #include"Pillar.h"
 #include"list.h"
 #include"ActionRunner.h"
+#include"Character.h"
+#include"Background.h"
 class GameScene: public cocos2d::Layer{
 
 public:
 
 	static cocos2d::Scene* createScene();
 	virtual ~GameScene()override;
-
 	virtual bool init() override;
 	virtual void update(float deltaTime)override;
 
@@ -18,13 +19,20 @@ private:
 	
 	Pillar* createPillar(const cocos2d::Vec2& origin);
 	void moveCamera(cocos2d::Camera*camera);
+	void doSomethingOnAStickFellDown();
 
-	ListNode<Pillar*>*m_pPillarNodePointer;
+	//Pillar is a normal object
 	List<Pillar*>m_pillars;
-	cocos2d::Sprite* m_background;
+	//This is a node pointer
+	ListNode<Pillar*>*m_pPillarNodePointer;
 
+
+	//cocos2d::Sprite* m_background;
 	
-	
+	//normal object
+	Character*m_character;
+
+	Background*m_pBackground;
 	
 	
 	
@@ -39,6 +47,8 @@ private:
 	cocos2d::Size visibleSize;
 	cocos2d::Vec2 origin;
 
+	void setupMenu();
+	void setupEventHandler();
 	bool onTouchBegan(cocos2d::Touch*touch, cocos2d::Event*ev)override;
 	void onTouchMoved(cocos2d::Touch*touch, cocos2d::Event*ev)override;
 	void onTouchEnded(cocos2d::Touch*touch, cocos2d::Event*ev)override;
