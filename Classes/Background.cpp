@@ -79,13 +79,17 @@ void Background::update(float deltaTime)
 }
 
 
-void Background::moveAgainstCamera(float movingTime, const Vec2& distance)
+void Background::moveAlongCamera(float movingTime, const Vec2& distance)
 {
-	for (auto a = m_pClouds.first(); a != m_pClouds.tail; a = a->next) {
-		auto action = new MoveToTarget(movingTime, a->data->getPosition() - distance, a->data);
-		a->data->AddPointer((void**)&(action->m_pNode));
-		ActionRunner::getInstance()->addAction(action);
-	}
+	//for (auto a = m_pClouds.first(); a != m_pClouds.tail; a = a->next) {
+
+	//	auto action = new MoveToTarget(movingTime, a->data->getPosition() - distance, a->data);
+
+	//	a->data->AddPointer((void**)&(action->m_pNode));
+	//	
+	//	ActionRunner::getInstance()->addAction(action);
+
+	//}
 }
 
 void Background::generateCloud(bool atCreateTime)

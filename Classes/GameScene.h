@@ -17,7 +17,7 @@ public:
 
 private:
 	
-	Pillar* createPillar(const cocos2d::Vec2& origin);
+	Pillar* createPillar(const cocos2d::Vec2& origin,bool atInit = false);
 	void moveCamera(cocos2d::Camera*camera);
 	void doSomethingOnAStickFellDown();
 

@@ -13,7 +13,7 @@ public:
 	inline void setHasSpawnedOne(bool spawned) { m_spawnedOne = spawned; }
 	inline Stick*getStick() { return m_pStick; }
 private:
-	bool m_spawnedOne = false;
+	bool m_spawnedOne;
 	cocos2d::Layer*m_pLayer;
 	cocos2d::Sprite*m_pillarSprite;
 	cocos2d::PhysicsBody*m_pillarBody;

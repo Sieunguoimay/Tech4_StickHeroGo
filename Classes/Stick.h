@@ -22,12 +22,13 @@ public:
 	~Stick();
 
 	inline cocos2d::DrawNode*getDrawer() { return this; }
+	inline const bool& isFalling()const { return (m_state == FALLING); }
 	inline const bool&hasFell()const { return (m_state == StickAnimationStates::FELL); }
 	inline const bool&hasEnlogated()const { return (m_state == StickAnimationStates::ENLONGATED); }
 	inline const float&getLength()const { return m_length; }
 
-	inline void startEnlongating() { m_state = StickAnimationStates::ENLONGATING; }
-	inline void stopEnlongating() { m_state = StickAnimationStates::ENLONGATED; }
+	inline void startEnlongating() { if(m_state == START) m_state = StickAnimationStates::ENLONGATING; }
+	inline void stopEnlongating() { if (m_state == ENLONGATING) m_state = StickAnimationStates::ENLONGATED; }
 
 	void update(float deltaTime);
 

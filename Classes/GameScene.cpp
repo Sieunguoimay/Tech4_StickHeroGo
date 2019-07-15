@@ -52,8 +52,13 @@ bool GameScene::init()
 	m_pBackground = Background::create();
 	addChild(m_pBackground);
 
-	m_pillars.push_back(createPillar(Vec2(0, 0)));
-	m_pPillarNodePointer = m_pillars.first();
+	auto a = createPillar(Vec2(visibleSize.width/4, 0),true);
+	m_pillars.push_back(a);
+	a->setHasSpawnedOne(true);
+	auto b = createPillar(Vec2(visibleSize.width / 4*3, 0), true);
+
+	m_pillars.push_back(b);
+	m_pPillarNodePointer = m_pillars.last();
 
 
 	auto&firstSpritePos = m_pillars.first()->data->getSprite()->getPosition();
@@ -63,7 +68,7 @@ bool GameScene::init()
 	m_character->init(Vec2(firstSpritePos.x,
 		firstSpritePos.y + firstSpriteSize.height / 2
 		+ m_character->getSprite()->getContentSize().height / 2));
-	
+	m_character->moveToNextPillar(a);
 	return true;
 }
 
@@ -85,15 +90,15 @@ void GameScene::update(float deltaTime)
 		auto&size = pillar->getSprite()->getContentSize();
 		
 		if (pillar->getStick()->hasFell()) {
-			CCLOG("FALLINNNNGGGG");
 			moveCamera(camera);
 		}
 
 		pillar->getStick()->update(deltaTime);
 
-		if (pillar->checkOnCamera(visibleSize,camera->getPosition())) {
+		if (pillar->checkOnCamera(visibleSize, camera->getPosition())) {
 			if (!pillar->hasSpawnedOne()) {
-				m_pillars.push_back(createPillar(pos+Vec2(size.width/2,0)));
+				CCLOG("has Spawned One");
+				m_pillars.push_back(createPillar(pos+Vec2(size.width/2+1,0)));
 				pillar->setHasSpawnedOne(true);
 			}
 		}
@@ -104,6 +109,7 @@ void GameScene::update(float deltaTime)
 				it = m_pillars.erase(it);
 			}
 		}
+
 	}
 
 
@@ -114,19 +120,32 @@ void GameScene::update(float deltaTime)
 
 
 
-Pillar* GameScene::createPillar(const Vec2 & origin)
+Pillar* GameScene::createPillar(const Vec2 & origin, bool atInit /*= false*/)
 {
 	float r_dis = std::min(std::max(CCRANDOM_0_1(), 0.2f), 0.9f)*visibleSize.width;
-	float r_size = std::min(std::max(0.5f + CCRANDOM_0_1(), 0.7f), 1.3f);
+	const float r_size = std::min(std::max(0.5f + CCRANDOM_0_1(), 0.7f), 1.3f);
+	const auto pillar = new Pillar(this, r_size);
+	auto& size = pillar->getSprite()->getContentSize();
 
-	auto pillar = new Pillar(this, r_size);
-	auto&size = pillar->getSprite()->getContentSize();
-	pillar->init(Vec2(origin.x + size.width / 2 + r_dis, size.height / 2));
+	if (atInit) {
+		pillar->init(Vec2(origin.x, size.height / 2));
+	}else
+		pillar->init(Vec2(origin.x + size.width / 2 + r_dis, size.height / 2));
 	return pillar;
 }
 
 void GameScene::moveCamera(Camera *camera)
 {
+
+	auto temp = m_pPillarNodePointer;
+	int count = 0;
+	while (temp->next != m_pillars.tail) {
+		count++;
+		temp = temp->next;
+	}
+	CCLOG("How many next: %d", count);
+
+
 	if (m_pPillarNodePointer->next != m_pillars.tail &&!m_cameraMoving) {
 		doSomethingOnAStickFellDown();
 
@@ -136,20 +155,18 @@ void GameScene::moveCamera(Camera *camera)
 		auto&b = m_pPillarNodePointer->next->data->getSprite()->getPosition();
 		auto target = Vec2((b.x + a.x)*0.5f, camera->getPosition().y);
 		
-		m_pBackground->moveAgainstCamera(movingTime, target-camera->getPosition());
+		m_pBackground->moveAlongCamera(movingTime, target-camera->getPosition());
+
 		m_cameraMoving = true;
 		ActionRunner::getInstance()->addAction(new MoveToTarget(movingTime, target, camera, [this]() {
 			m_cameraMoving = false;
+			m_pPillarNodePointer = m_pPillarNodePointer->next;
 			}));
-
-		m_pPillarNodePointer = m_pPillarNodePointer->next;
-
 	}
 }
 
 void GameScene::doSomethingOnAStickFellDown()
 {
-
 	m_character->moveToNextPillar(m_pPillarNodePointer->data);
 }
 
@@ -193,9 +210,11 @@ void GameScene::setupEventHandler()
 
 bool GameScene::onTouchBegan(cocos2d::Touch * touch, cocos2d::Event * ev)
 {
-    if (m_pPillarNodePointer->prev == m_pillars.head)
-        m_pPillarNodePointer->data->getStick()->startEnlongating();
-    else
+	if (m_cameraMoving )return true;
+
+    //if (m_pPillarNodePointer->prev == m_pillars.head)
+    //    m_pPillarNodePointer->data->getStick()->startEnlongating();
+    //else
         m_pPillarNodePointer->prev->data->getStick()->startEnlongating();
 	return true;
 }
@@ -206,9 +225,11 @@ void GameScene::onTouchMoved(cocos2d::Touch * touch, cocos2d::Event * ev)
 
 void GameScene::onTouchEnded(cocos2d::Touch * touch, cocos2d::Event * ev)
 {
-    if (m_pPillarNodePointer->prev == m_pillars.head)
-        m_pPillarNodePointer->data->getStick()->stopEnlongating();
-    else
+	if (m_cameraMoving)return;
+
+    //if (m_pPillarNodePointer->prev == m_pillars.head)
+    //    m_pPillarNodePointer->data->getStick()->stopEnlongating();
+    //else
         m_pPillarNodePointer->prev->data->getStick()->stopEnlongating();
 }
 
@@ -236,9 +257,11 @@ void GameScene::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::E
 		break;
 	case EventKeyboard::KeyCode::KEY_SPACE:
 		//moveCamera(camera);
-		if (m_pPillarNodePointer->prev == m_pillars.head)
-			m_pPillarNodePointer->data->getStick()->startEnlongating();
-		else
+		if (m_cameraMoving)break;
+
+		//if (m_pPillarNodePointer->prev == m_pillars.head)
+		//	m_pPillarNodePointer->data->getStick()->startEnlongating();
+		//else
 			m_pPillarNodePointer->prev->data->getStick()->startEnlongating();
 		break;
 	}
@@ -259,9 +282,11 @@ void GameScene::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::
 		break;
 	case EventKeyboard::KeyCode::KEY_SPACE:
 		//moveCamera(camera);
-		if (m_pPillarNodePointer->prev == m_pillars.head)
-			m_pPillarNodePointer->data->getStick()->stopEnlongating();
-		else
+		if (m_cameraMoving )break;
+
+		//if (m_pPillarNodePointer->prev == m_pillars.head)
+		//	m_pPillarNodePointer->data->getStick()->stopEnlongating();
+		//else
 			m_pPillarNodePointer->prev->data->getStick()->stopEnlongating();
 		break;
 	}

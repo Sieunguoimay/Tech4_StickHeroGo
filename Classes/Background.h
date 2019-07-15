@@ -22,7 +22,7 @@ public:
 	virtual ~Background()override;
 	bool init();
 	virtual void update(float deltaTime)override;
-	void moveAgainstCamera(float movingTime, const Vec2&distance);
+	void moveAlongCamera(float movingTime, const Vec2&distance);
 private:
 	Sprite* m_pSpriteSky;
 	Sprite* m_pSpriteGrass;

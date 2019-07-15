@@ -41,6 +41,7 @@ void Stick::update(float deltaTime)
 	}
 }
 
+
 void Stick::fall()
 {
 }

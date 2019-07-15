@@ -17,6 +17,8 @@ Pillar::Pillar(cocos2d::Layer * pLayer, float randValue)
 
 	m_pStick = Stick::create();
 	pLayer->addChild(m_pStick);
+
+	m_spawnedOne = false;
 }
 
 Pillar::~Pillar()

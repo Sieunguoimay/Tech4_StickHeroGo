@@ -86,7 +86,7 @@ void RotateByAmount::run(float a)
 {
 	if (m_pNode == nullptr)return;
 	const float b = Utils::bezier4(0.0f, 0.0f, 0.0f, 1.0, a);
-	m_pNode->setRotation(m_oldAngle + b*m_amount);
+   	m_pNode->setRotation(m_oldAngle + b*m_amount);
 }
 
 MoveByAmount::MoveByAmount(float duration, const cocos2d::Vec2& amount, cocos2d::Node* node, std::function<void()> callback)
