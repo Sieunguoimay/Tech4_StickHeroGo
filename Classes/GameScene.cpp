@@ -48,19 +48,22 @@ void GameScene::update(float deltaTime)
 		}
 
 
-		m_pCharacter->MoveToTarget(Vec2(
-			nextPillar->GetTopRightPoint().x - m_pCharacter->getContentSize().width / 2,
-			nextPillar->GetTopRightPoint().y + m_pCharacter->getContentSize().height / 2));
-
 
 		float perfectLength = nextPillar->getPosition().x - pillar->GetTopRightPoint().x;
 		float stickLength = pillar->GetStick()->GetLength();
 		float nextPillarHalfWidth = (nextPillar->GetWidth() / 2);
 		float score = Utils::map(
 			std::min(std::abs(perfectLength - stickLength), nextPillarHalfWidth)
-			,0.0f, nextPillarHalfWidth,1.0f,0.0f);
+			,0.0f, nextPillarHalfWidth, MAX_SCORE_FOR_ONE_PILLAR,0.0f);
 
 		CCLOG("Score %f", score);
+
+
+		m_pCharacter->MoveToTarget(
+			nextPillar->GetTopRightPoint().x - m_pCharacter->getContentSize().width / 2
+			- m_pCharacter->getPosition().x ,
+			(score>0?-1.0f: pillar->GetTopRightPoint().x + stickLength - m_pCharacter->getPosition().x));
+
 	}
 
 }
@@ -206,6 +209,9 @@ void GameScene::initGameObject()
 
 	m_pCharacter = Character::createCharacter();
 	m_pPlatform->addChild(m_pCharacter);
+	m_pCharacter->setPosition(
+		m_pPlatform->GetCurrentPillar()->getPosition() 
+		+ Vec2(0.0f,m_pPlatform->GetCurrentPillar()->GetHeight()/2+m_pCharacter->GetHeight()/2));
 
 	m_pClouds = Clouds::createClouds();
 	m_pZoomingLayer2->addChild(m_pClouds);

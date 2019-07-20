@@ -20,14 +20,34 @@ Character * Character::createCharacter()
 
 void Character::initCharacter()
 {
+	this->scheduleUpdate();
+	m_fallNow = false;
 	CCLOG("Player created %d",this->getChildrenCount());
 }
 
 void Character::update(float deltaTime) {
+	if (m_fallNow&&_position.x>= m_fallPoint) {
+		m_fallNow = false;
+		this->stopAction(m_moveAction);
+		this->runAction(Sequence::create(
+			MoveBy::create(0.5f, Vec2(0.0f, -_position.y)),
+			CallFunc::create([this]() {
+				CCLOG("GAME OVER");
+			})
+		,nullptr));
+	}
 }
 
-void Character::MoveToTarget(const Vec2 & target)
+void Character::MoveToTarget(float distance, float fallDistance)
 {
-	this->runAction(MoveTo::create(1.0f, target));
+	if (fallDistance > 0) {
+		fallDistance += GetWidth() / 2 + 10;
+		m_fallNow = true;
+		m_fallPoint = _position.x + fallDistance;
+	}
+
+
+	m_moveAction = MoveBy::create(1.0f, Vec2(std::max(distance, fallDistance), 0.0f));
+	this->runAction(m_moveAction);
 }
 
