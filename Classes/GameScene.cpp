@@ -34,7 +34,6 @@ bool GameScene::init()
 void GameScene::update(float deltaTime)
 {
 	//Hello world of git
-	//Hello change
 	auto pillar = m_pPlatform->GetCurrentPillar();
 	auto nextPillar = m_pPlatform->GetNextPillar();
 
@@ -200,5 +199,4 @@ void GameScene::initGameObject()
 	m_pZoomingLayer2->addChild(m_pClouds);
 	m_pPlatform->RegisterMoveAlongCallback(m_pClouds);
 	
-
 }
