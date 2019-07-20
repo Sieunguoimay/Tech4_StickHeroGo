@@ -21,6 +21,7 @@ bool Stick::init()
 	return true;
 }
 
+
 Stick::~Stick()
 {
 	CCLOG("Stick deleted");

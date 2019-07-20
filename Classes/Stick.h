@@ -24,7 +24,7 @@ public:
 	static Stick*createStick();
 	bool init()override;
 	~Stick();
-	
+
 	void update(float deltaTime);
 
 	inline void SetState(int state) { if(m_state !=DONE) m_state = state; }

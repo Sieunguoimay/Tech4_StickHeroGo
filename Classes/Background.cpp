@@ -54,21 +54,8 @@ bool Background::initBackground(Layer*pZoomingLayer, Platform*pPlatform)
 
 void Background::update(float deltaTime)
 {
-	//const auto visibleSize = Director::getInstance()->getVisibleSize();
-	//const auto&camera = Camera::getDefaultCamera();
-	//generateCloud();
-	//for (auto a = m_pClouds.first(); a != m_pClouds.tail; a = a->next) {
-	//	const auto& cloud = a->data;
-	//	const auto& pos = a->data->getPosition();
-	//	const auto& size = a->data->getContentSize()*a->data->getScale();
-	//	if (pos.x + size.width / 2 <camera->getPosition().x-visibleSize.width/2) {
-	//		m_pGameSceneLayer->removeChild(cloud);
-	//		a = m_pClouds.erase(a);
-	//	}
-	//}
 
 }
-
 
 void Background::moveAlongCamera(float movingTime, const Vec2& distance)
 {

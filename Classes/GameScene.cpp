@@ -22,7 +22,6 @@ bool GameScene::init()
 	srand(time(0));
 	scheduleUpdate();
 	setupEventHandler();
-
 	initGameObject();
 
 
@@ -144,9 +143,6 @@ void GameScene::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::
 		break;
 	}
 }
-
-
-
 
 void GameScene::setupMenu()
 {
