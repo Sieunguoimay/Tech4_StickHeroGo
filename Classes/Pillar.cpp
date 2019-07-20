@@ -1,52 +1,57 @@
 #include "Pillar.h"
-USING_NS_CC;
 
-Pillar::Pillar(cocos2d::Layer * pLayer, float randValue)
-	:m_pLayer(pLayer),m_stick(pLayer)
+Pillar * Pillar::createPillar(GameLayer*layer)
 {
-	CCLOG("Created a pillar");
-
-	m_pillarSprite= Sprite::create("pillar.png");
-	m_pillarSprite->setContentSize(Size(m_pillarSprite->getContentSize().width*randValue, m_pillarSprite->getContentSize().height));
-	m_pillarBody = PhysicsBody::createBox(m_pillarSprite->getContentSize());
-
-	m_pillarBody->setDynamic(false);
-	m_pillarSprite->setPhysicsBody(m_pillarBody);
-
-	pLayer->addChild(m_pillarSprite);
-
+	auto pillar = new Pillar();
+	if (pillar&&pillar->initWithFile("pillar.png")) {
+		pillar->initPillar(layer);
+		pillar->autorelease();
+		return pillar;
+	}
+	CC_SAFE_DELETE(pillar);
+	return pillar;
 }
 
 Pillar::~Pillar()
 {
-	m_pLayer->removeChild(m_pillarSprite, true);
-	CCLOG("Deleted a pillar");
+	CCLOG("Pillar deleted");
 }
 
-void Pillar::init(const cocos2d::Vec2 & pos)
+void Pillar::initPillar(GameLayer*layer)
 {
-	m_pillarSprite->setPosition(pos);
-	auto&size = m_pillarSprite->getContentSize();
-	m_stick.getDrawer()->setPosition(pos + Vec2(size.width / 2, size.height / 2));
+	m_spawned = false;
+	m_pStick = Stick::createStick();
+	layer->addChild(m_pStick);
+
+	CCLOG("Pillar created %d",this->getChildrenCount());
 }
 
-bool Pillar::checkOnCamera(const cocos2d::Size & visibleSize, const cocos2d::Vec2 & camPos)
+void Pillar::setPosition(const Vec2 & pos)
 {
-	auto&pos = m_pillarSprite->getPosition();
-	auto size = m_pillarSprite->getContentSize();
-	if (pos.x + size.width / 2+ m_stick.getLength() < camPos.x - visibleSize.width / 2) {
-		return false;
-
-	}
-	if (pos.x - size.width / 2 > camPos.x + visibleSize.width / 2) {
-		return false;
-	}
-
-	/*if (pos.y + size.height / 2 < camPos.y - visibleSize.height / 2)
-		return false;
-	if (pos.y - size.height / 2 > camPos.y + visibleSize.height / 2)
-		return false;*/
-
-	return true;
+	GameSprite::setPosition(pos);
+	m_pStick->setPosition(this->GetTopRightPoint());
 }
 
+
+bool Pillar::HasDone()
+{
+	auto worldPos = getParent()->convertToWorldSpace(_position);
+	if (worldPos.x +_contentSize.width/2 < 0) {
+		CCLOG("One pillar off screen %f %f", worldPos.x, worldPos.y);
+		return true;
+	}
+	return false;
+}
+
+bool Pillar::ReadyForSpawning()
+{
+	if (!m_spawned) {
+		auto worldPos = getParent()->convertToWorldSpace(_position);
+		if (worldPos.x -_contentSize.width/2 < m_visibleSize.width) {
+			CCLOG("One pillar on screen %f %f", worldPos.x, worldPos.y);
+			m_spawned = true;
+			return true;
+		}
+	}
+	return false;
+}

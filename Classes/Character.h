@@ -1,15 +1,10 @@
 #pragma once
-#include"cocos2d.h"
-#include"Pillar.h"
-USING_NS_CC;
-class Character {
-	Layer*m_pLayer;
-	Sprite*m_sprite;
+#include"GameSprite.h"
+class Character :public GameSprite{
 public:
-	Character(Layer*pLayer);
 	~Character();
+	static Character*createCharacter();
+	void initCharacter();
 
-	void moveToNextPillar(Pillar*pPillar);
-	void init(const Vec2&pos);
-	inline Sprite*getSprite() const { return m_sprite; }
+	void MoveToTarget(const Vec2&target);
 };

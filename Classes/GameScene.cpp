@@ -1,69 +1,32 @@
 #include"GameScene.h"
 #include"PauseScene.h"
-USING_NS_CC;
-cocos2d::Scene * GameScene::createScene()
+#include"Platform.h"
+#include"utils/Definitions.h"
+#include"utils/Utils.h"
+Scene * GameScene::createScene()
 {
-	auto scene = Scene::createWithPhysics();
-	//scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_SHAPE);
-	auto layer = GameScene::create();
-	layer->SetPhysicsWorld(scene->getPhysicsWorld());
-	scene->addChild(layer);
-	return scene;
+	auto gameScene = Scene::create();
+	gameScene->addChild(GameScene::create());
+	return gameScene;
 }
 
 GameScene::~GameScene()
 {
-
-	ActionRunner::cleanUp();
-
-	//how we clean up what we created
-	delete m_character;
-	for (ListNode<Pillar*>* it = m_pillars.first(); it != m_pillars.tail; it = it->next) {
-		delete it->data;
-	}
+	CCLOG("GameScene Deleted");
 }
 
 
 bool GameScene::init()
 {
 	if (!Layer::init()) return false;
-
 	srand(time(0));
-
-	setupMenu();
-	setupEventHandler();
 	scheduleUpdate();
+	setupEventHandler();
+
+	initGameObject();
 
 
-
-	visibleSize = Director::getInstance()->getVisibleSize();
-	origin = Director::getInstance()->getVisibleOrigin();
-
-	//auto edgeBody = PhysicsBody::createEdgeBox(visibleSize, PHYSICSBODY_MATERIAL_DEFAULT,3);
-	//auto edgeNode = Node::create();
-	//edgeNode->setPosition(Point(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2));
-	//edgeNode->setPhysicsBody(edgeBody);
-	//addChild(edgeNode);
-
-	//m_background = Background::createBackground();
-	//m_background->setPosition(visibleSize.width / 2, visibleSize.height / 2);
-	//this->addChild(m_background);
-
-	m_pBackground = Background::create();
-	addChild(m_pBackground);
-
-	m_pillars.push_back(createPillar(Vec2(0, 0)));
-	m_pPillarNodePointer = m_pillars.first();
-
-
-	auto&firstSpritePos = m_pillars.first()->data->getSprite()->getPosition();
-	auto&firstSpriteSize = m_pillars.first()->data->getSprite()->getContentSize();
-	
-	m_character = new Character(this);
-	m_character->init(Vec2(firstSpritePos.x,
-		firstSpritePos.y + firstSpriteSize.height / 2
-		+ m_character->getSprite()->getContentSize().height / 2));
-	
+	CCLOG("GameScene Created %f %f %d",m_visibleSize.width,m_visibleSize.height,this->getChildrenCount());
 	return true;
 }
 
@@ -71,40 +34,23 @@ bool GameScene::init()
 
 void GameScene::update(float deltaTime)
 {
-	const float cameraSpeed = 40.0f;
-	auto camera = Camera::getDefaultCamera();
-	
+	auto pillar = m_pPlatform->GetCurrentPillar();
+	auto nextPillar = m_pPlatform->GetNextPillar();
 
-	ActionRunner::getInstance()->update(deltaTime);
+	if (pillar != nullptr
+		&&nextPillar!=nullptr
+		&&pillar->GetStick()->GetState() == FELL) {
 
-	//loop through all the pillar for updating
-	for (ListNode<Pillar*>* it = m_pillars.first(); it != m_pillars.tail; it = it->next) {
-		
-		auto&pillar = it->data;
-		auto&pos = pillar->getSprite()->getPosition();
-		auto&size = pillar->getSprite()->getContentSize();
-		
-		if (pillar->getStick().hasFell()) {
-			doSomethingOnAStickFellDown();
-			moveCamera(camera);
+		auto scale = m_pPlatform->MoveAndCalculateScale();
+		if (scale > 0) {
+			m_pZoomingLayer->runAction(ScaleTo::create(1.0f, scale));
+			m_pZoomingLayer2->runAction(ScaleTo::create(1.0f, Utils::map(scale,0.0f,1.0f,0.75f,1.0f)));
 		}
-
-		pillar->getStick().update(deltaTime);
-
-		if (pillar->checkOnCamera(visibleSize,camera->getPosition())) {
-			if (!pillar->hasSpawnedOne()) {
-				m_pillars.push_back(createPillar(pos+Vec2(size.width/2,0)));
-				pillar->setHasSpawnedOne(true);
-			}
-		}
-		else {
-			if (pillar->hasSpawnedOne()) {
-				CCLOG("It's time to delete pillar");
-				delete pillar;
-				it = m_pillars.erase(it);
-			}
-		}
+		m_pCharacter->MoveToTarget(Vec2(
+			nextPillar->GetTopRightPoint().x - m_pCharacter->getContentSize().width / 2,
+			nextPillar->GetTopRightPoint().y + m_pCharacter->getContentSize().height / 2));
 	}
+
 }
 
 
@@ -112,56 +58,6 @@ void GameScene::update(float deltaTime)
 
 
 
-Pillar* GameScene::createPillar(const Vec2 & origin)
-{
-	float r_dis = std::min(std::max(CCRANDOM_0_1(), 0.2f), 0.9f)*visibleSize.width;
-	float r_size = std::min(std::max(0.5f + CCRANDOM_0_1(), 0.7f), 1.3f);
-
-	auto pillar = new Pillar(this, r_size);
-	auto&size = pillar->getSprite()->getContentSize();
-	pillar->init(Vec2(origin.x + size.width / 2 + r_dis, size.height / 2));
-	return pillar;
-}
-
-void GameScene::moveCamera(Camera *camera)
-{
-	if (m_pPillarNodePointer->next != m_pillars.tail) {
-		auto&a = m_pPillarNodePointer->data->getSprite()->getPosition();
-		auto&b = m_pPillarNodePointer->next->data->getSprite()->getPosition();
-		auto target = Vec2((b.x + a.x)*0.5f, camera->getPosition().y);
-
-		ActionRunner::getInstance()->addAction(new MoveToTarget(1.0f, target, camera));
-		//if(m_background!=nullptr)
-		//	ActionRunner::getInstance()->addAction(MoveToTarget::create(1.0f, target, m_background));
-		m_pPillarNodePointer = m_pPillarNodePointer->next;
-	}
-}
-
-void GameScene::doSomethingOnAStickFellDown()
-{
-
-	m_character->moveToNextPillar(m_pPillarNodePointer->data);
-}
-
-
-
-
-
-
-
-
-void GameScene::setupMenu()
-{
-	auto button = MenuItemImage::create("CloseNormal.png", "CloseSelected.png", CC_CALLBACK_1(GameScene::menuPauseCallback, this));
-	if (button == nullptr || button->getContentSize().width <= 0 || button->getContentSize().height <= 0)
-		printf("Error while loading: %s or %s\n", "CloseNormal.png", "CloseSelected.png");
-	else
-		button->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
-
-	auto menu = Menu::create(button, NULL);
-	menu->setPosition(Vec2::ZERO);
-	this->addChild(menu, 1);
-}
 
 void GameScene::setupEventHandler()
 {
@@ -177,13 +73,14 @@ void GameScene::setupEventHandler()
 
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(keyboardListener, this);
-
-
 }
+
+
+
+
 
 bool GameScene::onTouchBegan(cocos2d::Touch * touch, cocos2d::Event * ev)
 {
-
 	return true;
 }
 
@@ -195,11 +92,15 @@ void GameScene::onTouchEnded(cocos2d::Touch * touch, cocos2d::Event * ev)
 {
 }
 
+
+
+
 void GameScene::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event * event)
 {
 	const float cameraSpeed = 10.0f;
 	auto camera = Camera::getDefaultCamera();
-	
+	auto pillar = m_pPlatform->GetCurrentPillar();
+
 	CCLOG(" key pressed %d", keyCode);
 	switch (keyCode) {
 	case EventKeyboard::KeyCode::KEY_A:
@@ -215,20 +116,17 @@ void GameScene::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::E
 		camera->setPosition(camera->getPosition() + Vec2(0, cameraSpeed));
 		break;
 	case EventKeyboard::KeyCode::KEY_Z:
-		moveCamera(camera);
 		break;
 	case EventKeyboard::KeyCode::KEY_SPACE:
-		//moveCamera(camera);
-		if (m_pPillarNodePointer->prev == m_pillars.head)
-			m_pPillarNodePointer->data->getStick().startEnlongating();
-		else
-			m_pPillarNodePointer->prev->data->getStick().startEnlongating();
+		if (pillar != nullptr&&pillar->GetStick()->GetState() == START)
+			pillar->GetStick()->SetState(ENLONGATING);
 		break;
 	}
 }
 
 void GameScene::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event * event)
 {
+	auto pillar = m_pPlatform->GetCurrentPillar();
 	switch (keyCode) {
 	case EventKeyboard::KeyCode::KEY_A:
 		break;
@@ -241,12 +139,8 @@ void GameScene::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::
 	case EventKeyboard::KeyCode::KEY_Z:
 		break;
 	case EventKeyboard::KeyCode::KEY_SPACE:
-		//moveCamera(camera);
-		if (m_pPillarNodePointer->prev == m_pillars.head)
-			m_pPillarNodePointer->data->getStick().stopEnlongating();
-		else
-			m_pPillarNodePointer->prev->data->getStick().stopEnlongating();
-
+		if (pillar != nullptr&&pillar->GetStick()->GetState() == ENLONGATING)
+			pillar->GetStick()->SetState(ENLONGATED);
 		break;
 	}
 }
@@ -254,6 +148,18 @@ void GameScene::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::
 
 
 
+void GameScene::setupMenu()
+{
+	auto button = MenuItemImage::create("CloseNormal.png", "CloseSelected.png", CC_CALLBACK_1(GameScene::menuPauseCallback, this));
+	if (button == nullptr || button->getContentSize().width <= 0 || button->getContentSize().height <= 0)
+		printf("Error while loading: %s or %s\n", "CloseNormal.png", "CloseSelected.png");
+	else
+		button->setPosition(Vec2(m_visibleSize.width / 2, m_visibleSize.height / 2));
+
+	auto menu = Menu::create(button, NULL);
+	menu->setPosition(Vec2::ZERO);
+	this->addChild(menu, 1);
+}
 
 void GameScene::menuPauseCallback(cocos2d::Ref * pSender)
 {
@@ -269,3 +175,32 @@ void GameScene::menuGameOverCallback(cocos2d::Ref * pSender)
 
 
 
+
+void GameScene::initGameObject()
+{
+	
+	m_pZoomingLayer = Layer::create();
+	m_pZoomingLayer2 = Layer::create();
+	m_pZoomingLayer->setAnchorPoint(Vec2(0.5f, 0.0f));
+	m_pZoomingLayer2->setAnchorPoint(Vec2(0.5f, 0.0f));
+	this->addChild(m_pZoomingLayer);
+	this->addChild(m_pZoomingLayer2);
+	
+
+	m_pPlatform = Platform::createPlatform();
+
+	m_pBackground = Background::createBackground(m_pZoomingLayer, m_pPlatform);
+	this->addChild(m_pBackground);
+
+	m_pZoomingLayer->addChild(m_pPlatform);
+
+
+	m_pCharacter = Character::createCharacter();
+	m_pPlatform->addChild(m_pCharacter);
+
+	m_pClouds = Clouds::createClouds();
+	m_pZoomingLayer2->addChild(m_pClouds);
+	m_pPlatform->RegisterMoveAlongCallback(m_pClouds);
+	
+
+}

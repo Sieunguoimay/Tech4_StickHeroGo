@@ -1,29 +1,30 @@
 #include "Character.h"
 
-Character::Character(Layer * pLayer)
-	:m_pLayer(pLayer)
-{
-	m_sprite = Sprite::create("main_character.png");
-	m_pLayer->addChild(m_sprite);
-	CCLOG("Created player");
-}
 
 Character::~Character()
 {
-	m_pLayer->removeChild(m_sprite, true);
 	CCLOG("Deleted player");
 }
 
-void Character::moveToNextPillar(Pillar * pPillar)
+Character * Character::createCharacter()
 {
-	auto action = MoveTo::create(1.0f, Vec2(
-		pPillar->getSprite()->getPosition().x+pPillar->getSprite()->getContentSize().width/2-m_sprite->getContentSize().width/2,
-		pPillar->getSprite()->getPosition().y + pPillar->getSprite()->getContentSize().height / 2 
-		+ m_sprite->getContentSize().height / 2));
-	m_sprite->runAction(action);
+	auto character = new Character();
+	if (character&&character->initWithFile("main_character.png")) {
+		character->initCharacter();
+		character->autorelease();
+		return character;
+	}
+	CC_SAFE_DELETE(character);
+	return nullptr;
 }
 
-void Character::init(const Vec2 & pos)
+void Character::initCharacter()
 {
-	m_sprite->setPosition(pos);
+	CCLOG("Player created %d",this->getChildrenCount());
 }
+
+void Character::MoveToTarget(const Vec2 & target)
+{
+	this->runAction(MoveTo::create(1.0f, target));
+}
+

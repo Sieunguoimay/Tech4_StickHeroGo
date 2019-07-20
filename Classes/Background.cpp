@@ -1,29 +1,11 @@
 #include "Background.h"
-
-//Background::Background(Layer * pLayer)
-//{
-//	auto visibleSize = Director::getInstance()->getVisibleSize();
-//	
-//
-//	this = Sprite::create("sky.png");
-//	if (m_spriteSky == nullptr) {CCLOG("Error: failed to load file sky.png");}
-//	else {
-//		m_spriteSky->setPosition(visibleSize.width / 2, visibleSize.height / 2);
-//		pLayer->addChild(m_spriteSky);
-//	}
-//
-//
-//}
-
-//layer->m_spriteGrass = Sprite::create("background_grass.png");
-//layer->m_spriteGrass->setPosition(visibleSize.width / 2, visibleSize.height / 2);
-//layer->addChild(layer->m_spriteGrass);
-//
-
-Background * Background::create()
+#include"utils/Utils.h"
+#include"utils/Definitions.h"
+Background * Background::createBackground(Layer*pZoomingLayer, Platform*pPlatform)
 {
 	auto background = new Background();
-	if (background&&background->init()) {
+	if (background&&background->initWithFile("sky.png")) {
+		background->initBackground(pZoomingLayer,pPlatform);
 		background->autorelease();
 		return background;
 	}
@@ -31,30 +13,94 @@ Background * Background::create()
 	return nullptr;
 }
 
-
-Background::Background()
-{
-	CCLOG("Created background");
-}
-
 Background::~Background()
 {
 	CCLOG("Deleted background");
 }
 
-bool Background::init()
+
+bool Background::initBackground(Layer*pZoomingLayer, Platform*pPlatform)
 {
-	auto visibleSize = Director::getInstance()->getVisibleSize();
+	scheduleUpdate();
+	_position += m_visibleSize / 2;
+	
+	this->setGlobalZOrder(GAME_LAYER_NEG_1);
+	
+	m_pSpriteGrass = Sprite::create("background_grass.png");
+	m_pSpriteGrass->setPosition(m_visibleSize.width / 2, m_pSpriteGrass->getContentSize().height/2);
+	m_pSpriteGrass->setGlobalZOrder(GAME_LAYER_NEG_1);
+	this->addChild(m_pSpriteGrass);
 
-	m_pSpriteSky = Sprite::create("sky.png");
-	m_pSpriteSky->setPosition(visibleSize.width / 2, visibleSize.height / 2);
-	addChild(m_pSpriteSky);
+	m_pWave3 = Wave::createWave("wave3.png");
+	pZoomingLayer->addChild(m_pWave3);
+	pPlatform->RegisterMoveAlongCallback(m_pWave3);
+	m_pWave3->setGlobalZOrder(GAME_LAYER_0);
 
+	m_pWave2 = Wave::createWave("wave2.png");
+	pZoomingLayer->addChild(m_pWave2);
+	pPlatform->RegisterMoveAlongCallback(m_pWave2);
+	m_pWave2->setGlobalZOrder(GAME_LAYER_0);
+
+	
+	m_pWave1 = Wave::createWave("wave1.png");
+	pZoomingLayer->addChild(m_pWave1);
+	pPlatform->RegisterMoveAlongCallback(m_pWave1);
+	m_pWave1->setGlobalZOrder(GAME_LAYER_1);
+
+	CCLOG("Created background %d",this->getChildrenCount());
 	return true;
 }
 
-void Background::moveAlongCamera(Camera * camera)
+
+void Background::update(float deltaTime)
 {
-	//m_spriteSky->setPosition(camera->getPosition());
-	//m_spriteGrass->setPosition(camera->getPosition());
+	//const auto visibleSize = Director::getInstance()->getVisibleSize();
+	//const auto&camera = Camera::getDefaultCamera();
+	//generateCloud();
+	//for (auto a = m_pClouds.first(); a != m_pClouds.tail; a = a->next) {
+	//	const auto& cloud = a->data;
+	//	const auto& pos = a->data->getPosition();
+	//	const auto& size = a->data->getContentSize()*a->data->getScale();
+	//	if (pos.x + size.width / 2 <camera->getPosition().x-visibleSize.width/2) {
+	//		m_pGameSceneLayer->removeChild(cloud);
+	//		a = m_pClouds.erase(a);
+	//	}
+	//}
+
 }
+
+
+void Background::moveAlongCamera(float movingTime, const Vec2& distance)
+{
+	//for (auto a = m_pClouds.first(); a != m_pClouds.tail; a = a->next) {
+
+	//	auto action = new MoveToTarget(movingTime, a->data->getPosition() - distance, a->data);
+
+	//	a->data->AddPointer((void**)&(action->m_pNode));
+	//	
+	//	ActionRunner::getInstance()->addAction(action);
+
+	//}
+}
+
+//void Background::generateCloud(bool atCreateTime)
+//{
+//	const auto visibleSize = Director::getInstance()->getVisibleSize();
+//	const auto camPos = Camera::getDefaultCamera()->getPosition();
+//	float rightEdge = camPos.x + visibleSize.width / 2;
+//
+//	if (atCreateTime) rightEdge = camPos.x - visibleSize.width / 2;
+//	if (m_pClouds.size() < 4) {
+//		auto cloud = Cloud::create();
+//		if (cloud != nullptr) {
+//			m_pGameSceneLayer->addChild(cloud);
+//			const float x = rightEdge + Utils::map(CCRANDOM_0_1(), 0.0f, 1.0f, 0.0f, visibleSize.width)+ cloud->getContentSize().width / 2;
+//			const float y = Utils::map(CCRANDOM_0_1(), 0, 1.0f, camPos.y - visibleSize.height / 4, camPos.y + visibleSize.height / 2);
+//			//const float scale = Utils::map(CCRANDOM_0_1(), 0, 1.0f, 0.5f, 3.0f);
+//			//cloud->setScale(scale);
+//			cloud->setPosition(x, y);
+//			m_pClouds.push_back(cloud);
+//		}
+//	}
+//}
+

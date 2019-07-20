@@ -1,5 +1,17 @@
 #include "ActionRunner.h"
-#include"Utils.h"
+#include"utils/Utils.h"
+BaseAction::~BaseAction() {
+	CCLOG("Another Action Deleted"); 	
+
+	if (m_callback != nullptr) {
+		try {
+			m_callback();
+		}
+		catch (int e) {}
+		m_callback = nullptr;
+	}
+}
+
 ActionRunner*ActionRunner::s_instance = nullptr;
 void ActionRunner::cleanUp()
 {
@@ -43,14 +55,15 @@ void ActionRunner::update(float deltaTime)
 
 
 
-MoveToTarget::MoveToTarget(float duration, const cocos2d::Vec2 & target, cocos2d::Node * node)
-	:BaseAction(duration,0,"MoveToTarget")
+MoveToTarget::MoveToTarget(float duration, const cocos2d::Vec2 & target, cocos2d::Node * node, std::function<void()>callback)
+	:BaseAction(duration,0,"MoveToTarget",callback)
 	,m_target(target), m_pNode(node),m_oldPos(node->getPosition())
 {}
 
 void MoveToTarget::run(float a)
 {
-	float b = bezier4(0, 0.0, 1.0, 1.0, a);
+	if (m_pNode == nullptr)return;
+	float b = Utils::bezier4(0, 0.0, 1.0, 1.0, a);
 	m_pNode->setPosition(m_oldPos + b*(m_target - m_oldPos));
 }
 
@@ -62,22 +75,28 @@ void MoveToTarget::run(float a)
 
 
 RotateByAmount::RotateByAmount(float duration, const float & amount, cocos2d::Node * node, std::function<void()>callback)
-	:BaseAction(duration,0,"RotateByAmount")
+	:BaseAction(duration,0,"RotateByAmount", callback)
 	,m_amount(amount)
 	,m_oldAngle(node->getRotation())
 	,m_pNode(node)
-	,m_callback(callback)
 {}
 
-RotateByAmount::~RotateByAmount()
-{
-	if (m_callback != nullptr) {
-		m_callback();
-		m_callback = nullptr;
-	}
-}
+
 void RotateByAmount::run(float a)
 {
-	float b = bezier4(0.0f, 0.0f, 0.0f, 1.0, a);
-	m_pNode->setRotation(m_oldAngle + b*m_amount);
+	if (m_pNode == nullptr)return;
+	const float b = Utils::bezier4(0.0f, 0.0f, 0.0f, 1.0, a);
+   	m_pNode->setRotation(m_oldAngle + b*m_amount);
+}
+
+MoveByAmount::MoveByAmount(float duration, const cocos2d::Vec2& amount, cocos2d::Node* node, std::function<void()> callback)
+	:BaseAction(duration,0,"MoveByAmount", callback),m_amount(amount),m_pNode(node)
+{}
+
+
+void MoveByAmount::run(float a)
+{
+	if (m_pNode == nullptr)return;
+	const float b = Utils::bezier4(0.0f, 0.0f, 0.0f, 1.0, a);
+	m_pNode->setPosition(m_oldPos + b * m_amount);
 }
