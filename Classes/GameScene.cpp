@@ -33,6 +33,7 @@ bool GameScene::init()
 
 void GameScene::update(float deltaTime)
 {
+	//Hello world of git
 	auto pillar = m_pPlatform->GetCurrentPillar();
 	auto nextPillar = m_pPlatform->GetNextPillar();
 
