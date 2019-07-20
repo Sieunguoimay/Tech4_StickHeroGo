@@ -23,6 +23,9 @@ void Character::initCharacter()
 	CCLOG("Player created %d",this->getChildrenCount());
 }
 
+void Character::update(float deltaTime) {
+}
+
 void Character::MoveToTarget(const Vec2 & target)
 {
 	this->runAction(MoveTo::create(1.0f, target));

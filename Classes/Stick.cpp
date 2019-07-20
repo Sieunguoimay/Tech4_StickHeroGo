@@ -1,6 +1,6 @@
 #include "Stick.h"
 #include"ActionRunner.h"
-
+#include"utils/Definitions.h"
 Stick * Stick::createStick()
 {
 	auto stick = Stick::create();
@@ -12,7 +12,7 @@ bool Stick::init()
 {
 	if (!DrawNode::init())return false;
 	scheduleUpdate();
-
+	this->setGlobalZOrder(GAME_LAYER_1);
 	this->drawSolidRect(Vec2(0, 0), Vec2(10, m_maxLength), Color4F(1.0f, 1.0f, 1.0f, 0.5f));
 	this->setScaleY(0.0f);
 	m_state = START;

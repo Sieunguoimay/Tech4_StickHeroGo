@@ -31,18 +31,18 @@ bool Background::initBackground(Layer*pZoomingLayer, Platform*pPlatform)
 	m_pSpriteGrass->setGlobalZOrder(GAME_LAYER_NEG_1);
 	this->addChild(m_pSpriteGrass);
 
-	m_pWave3 = Wave::createWave("wave3.png");
+	m_pWave3 = Wave::createWave("wave3.png",80.0f,0.4f,0.6f);
 	pZoomingLayer->addChild(m_pWave3);
 	pPlatform->RegisterMoveAlongCallback(m_pWave3);
 	m_pWave3->setGlobalZOrder(GAME_LAYER_0);
 
-	m_pWave2 = Wave::createWave("wave2.png");
+	m_pWave2 = Wave::createWave("wave2.png",90.0f,0.5f,0.8f);
 	pZoomingLayer->addChild(m_pWave2);
 	pPlatform->RegisterMoveAlongCallback(m_pWave2);
 	m_pWave2->setGlobalZOrder(GAME_LAYER_0);
 
 	
-	m_pWave1 = Wave::createWave("wave1.png");
+	m_pWave1 = Wave::createWave("wave1.png",100.0f,0.6f,1.0f);
 	pZoomingLayer->addChild(m_pWave1);
 	pPlatform->RegisterMoveAlongCallback(m_pWave1);
 	m_pWave1->setGlobalZOrder(GAME_LAYER_1);

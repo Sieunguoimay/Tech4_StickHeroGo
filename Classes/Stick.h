@@ -29,4 +29,5 @@ public:
 
 	inline void SetState(int state) { if(m_state !=DONE) m_state = state; }
 	inline int GetState() { return m_state; }
+	inline float GetLength() { return m_length; }
 };

@@ -46,9 +46,21 @@ void GameScene::update(float deltaTime)
 			m_pZoomingLayer->runAction(ScaleTo::create(1.0f, scale));
 			m_pZoomingLayer2->runAction(ScaleTo::create(1.0f, Utils::map(scale,0.0f,1.0f,0.75f,1.0f)));
 		}
+
+
 		m_pCharacter->MoveToTarget(Vec2(
 			nextPillar->GetTopRightPoint().x - m_pCharacter->getContentSize().width / 2,
 			nextPillar->GetTopRightPoint().y + m_pCharacter->getContentSize().height / 2));
+
+
+		float perfectLength = nextPillar->getPosition().x - pillar->GetTopRightPoint().x;
+		float stickLength = pillar->GetStick()->GetLength();
+		float nextPillarHalfWidth = (nextPillar->GetWidth() / 2);
+		float score = Utils::map(
+			std::min(std::abs(perfectLength - stickLength), nextPillarHalfWidth)
+			,0.0f, nextPillarHalfWidth,1.0f,0.0f);
+
+		CCLOG("Score %f", score);
 	}
 
 }

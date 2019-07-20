@@ -5,6 +5,6 @@ public:
 	~Character();
 	static Character*createCharacter();
 	void initCharacter();
-
+	void update(float deltaTime)override;
 	void MoveToTarget(const Vec2&target);
 };
