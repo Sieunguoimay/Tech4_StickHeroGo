@@ -8,6 +8,7 @@
 #include"Wave.h"
 #include"GameParticleSystem.h"
 #include"OnScreenInfoDisplay.h"
+#include"HomeScene.h"
 class GameScene: public GameLayer{
 	CREATE_FUNC(GameScene);
 	
@@ -19,6 +20,9 @@ class GameScene: public GameLayer{
 	void onTouchEnded(Touch*touch, Event*ev)override;
 	void onKeyPressed(EventKeyboard::KeyCode keyCode, Event*event)override;
 	void onKeyReleased(EventKeyboard::KeyCode keyCode, Event*event)override;
+
+	void showHomeScene();
+	void hideHomeScene();
 
 
 	void setupMenu();
@@ -32,6 +36,8 @@ class GameScene: public GameLayer{
 	Layer*m_pZoomingLayer2;//scale variance factor smaller
 
 	OnScreenInfoDisplay*m_pOnScreenInfoDisplay;
+	HomeScene*m_pHomeScene;
+	EventListenerTouchOneByOne*m_touchListener;
 
 	Platform*m_pPlatform;
 	Character*m_pCharacter;

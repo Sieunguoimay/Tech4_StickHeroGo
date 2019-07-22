@@ -108,17 +108,17 @@ void GameScene::update(float deltaTime)
 
 void GameScene::setupEventHandler()
 {
-	auto listener = EventListenerTouchOneByOne::create();
-	listener->setSwallowTouches(true);
-	listener->onTouchBegan = CC_CALLBACK_2(GameScene::onTouchBegan, this);
-	listener->onTouchMoved = CC_CALLBACK_2(GameScene::onTouchMoved, this);
-	listener->onTouchEnded = CC_CALLBACK_2(GameScene::onTouchEnded, this);
+	m_touchListener = EventListenerTouchOneByOne::create();
+	m_touchListener->setSwallowTouches(true);
+	m_touchListener->onTouchBegan = CC_CALLBACK_2(GameScene::onTouchBegan, this);
+	m_touchListener->onTouchMoved = CC_CALLBACK_2(GameScene::onTouchMoved, this);
+	m_touchListener->onTouchEnded = CC_CALLBACK_2(GameScene::onTouchEnded, this);
 
 	auto keyboardListener = EventListenerKeyboard::create();
 	keyboardListener->onKeyPressed = CC_CALLBACK_2(GameScene::onKeyPressed, this);
 	keyboardListener->onKeyReleased = CC_CALLBACK_2(GameScene::onKeyReleased, this);
 
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(m_touchListener, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(keyboardListener, this);
 }
 
@@ -196,6 +196,14 @@ void GameScene::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::
 	}
 }
 
+void GameScene::showHomeScene()
+{
+}
+
+void GameScene::hideHomeScene()
+{
+}
+
 void GameScene::setupMenu()
 {
 	auto button = MenuItemImage::create("CloseNormal.png", "CloseSelected.png", CC_CALLBACK_1(GameScene::menuPauseCallback, this));
@@ -262,4 +270,8 @@ void GameScene::initGameObject()
 
 	m_score = 0;
 
+	m_pHomeScene = HomeScene::create();
+	this->addChild(m_pHomeScene);
+	_eventDispatcher->removeEventListener(m_touchListener);
+	m_pHomeScene->AddTouchListener();
 }
