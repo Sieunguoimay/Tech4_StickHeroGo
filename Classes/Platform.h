@@ -19,6 +19,7 @@ class Platform:public GameLayer {
 
 	void resetPosition();
 	std::vector<MoveAlongCallback*>m_callbacks;
+	Sequence*m_pMoveAction;
 public:
 	static Platform*createPlatform();
 	~Platform()override;
@@ -30,5 +31,6 @@ public:
 	inline Pillar*GetCurrentPillar() { if (m_nextPillarIndex >0)return m_pillars[m_nextPillarIndex - 1]; return nullptr; }
 	inline Pillar*GetNextPillar() { if (m_nextPillarIndex >=0)return m_pillars[m_nextPillarIndex]; return nullptr; }
 	inline void RegisterMoveAlongCallback(MoveAlongCallback*callback) { m_callbacks.push_back(callback); }
+	inline void StopMoving(){this->stopAction(m_pMoveAction); }
 };
 

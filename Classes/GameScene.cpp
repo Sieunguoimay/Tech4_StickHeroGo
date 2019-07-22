@@ -3,6 +3,7 @@
 #include"Platform.h"
 #include"utils/Definitions.h"
 #include"utils/Utils.h"
+#include"GameParticleSystem.h"
 Scene * GameScene::createScene()
 {
 	auto gameScene = Scene::create();
@@ -12,6 +13,7 @@ Scene * GameScene::createScene()
 
 GameScene::~GameScene()
 {
+	GameParticleSystem::CleanUp();
 	CCLOG("GameScene Deleted");
 }
 
@@ -22,6 +24,7 @@ bool GameScene::init()
 	srand(time(0));
 	scheduleUpdate();
 	setupEventHandler();
+
 	initGameObject();
 
 
@@ -40,6 +43,7 @@ void GameScene::update(float deltaTime)
 	if (pillar != nullptr
 		&&nextPillar!=nullptr
 		&&pillar->GetStick()->GetState() == FELL) {
+		
 
 		auto scale = m_pPlatform->MoveAndCalculateScale();
 		if (scale > 0) {
@@ -52,11 +56,26 @@ void GameScene::update(float deltaTime)
 		float perfectLength = nextPillar->getPosition().x - pillar->GetTopRightPoint().x;
 		float stickLength = pillar->GetStick()->GetLength();
 		float nextPillarHalfWidth = (nextPillar->GetWidth() / 2);
-		float score = Utils::map(
-			std::min(std::abs(perfectLength - stickLength), nextPillarHalfWidth)
-			,0.0f, nextPillarHalfWidth, MAX_SCORE_FOR_ONE_PILLAR,0.0f);
+		float distanceFromCenter = std::min(std::abs(perfectLength - stickLength), nextPillarHalfWidth);
 
-		CCLOG("Score %f", score);
+		int score = 0;// Utils::map(distanceFromCenter, 0.0f, nextPillarHalfWidth, MAX_SCORE_FOR_ONE_PILLAR, 0.0f);
+		if (distanceFromCenter <= nextPillar->GetWidth1()) score = 16;
+		else if (distanceFromCenter <= nextPillar->GetWidth2()) score = 8;
+		else if (distanceFromCenter < nextPillarHalfWidth) score = 4;
+
+		CCLOG("Score %d",score);
+
+		if (score > 0) {
+			nextPillar->RemoveRect();
+			 
+			m_score += score;
+			m_pOnScreenInfoDisplay->SetScore(m_score);
+
+			auto ps_pos = Vec2(pillar->GetStick()->getPosition().x + pillar->GetStick()->GetLength(),
+				pillar->GetTopRightPoint().y);
+			GameParticleSystem::GetInstance(PS_SMOKE)->SetAngleDirEnd(180.0f).Emit(0.2f, ps_pos);
+			GameParticleSystem::GetInstance(PS_STARS)->SetAngleDirEnd(180.0f).SetColor(255,200,0).Emit(0.2f, ps_pos);
+		}
 
 
 		m_pCharacter->MoveToTarget(
@@ -65,7 +84,20 @@ void GameScene::update(float deltaTime)
 			(score>0?-1.0f: pillar->GetTopRightPoint().x + stickLength - m_pCharacter->getPosition().x));
 
 	}
-
+	if (m_pCharacter->GetState() == CharacterState::CS_FALL_START) {
+		m_pPlatform->StopMoving();
+		CCLOG("CS_FALL_START");
+	}
+	if (m_pCharacter->GetState() == CharacterState::CS_DIED) {
+		CCLOG("GAME OVER");
+		GameParticleSystem::GetInstance(PS_WATER)
+			->SetMeanDistance(70.0f).SetDistanceVar(65.0f).SetMeanTime(0.7f).SetAngleDirEnd(180.0f).SetAngleDirStart(0.0f).SetSize(15.0f)
+			.SetEmittingRate(200.0f)
+			.SetCallback([this]() {
+				Director::getInstance()->popScene();
+			})
+			.Emit(0.1f, m_pCharacter->getPosition()+Vec2(0.0f,m_pCharacter->GetHeight()/2));
+	}
 }
 
 
@@ -96,6 +128,7 @@ void GameScene::setupEventHandler()
 
 bool GameScene::onTouchBegan(cocos2d::Touch * touch, cocos2d::Event * ev)
 {
+	GameParticleSystem::GetInstance(PS_SMOKE)->Emit(0.1f, touch->getLocation());
 	return true;
 }
 
@@ -119,18 +152,21 @@ void GameScene::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::E
 	CCLOG(" key pressed %d", keyCode);
 	switch (keyCode) {
 	case EventKeyboard::KeyCode::KEY_A:
-		camera->setPosition(camera->getPosition() + Vec2(-cameraSpeed, 0));
 		break;
 	case EventKeyboard::KeyCode::KEY_D:
-		camera->setPosition(camera->getPosition() + Vec2(cameraSpeed, 0));
 		break;
 	case EventKeyboard::KeyCode::KEY_S:
-		camera->setPosition(camera->getPosition() + Vec2(0,-cameraSpeed));
+		GameParticleSystem::GetInstance(PS_WATER)->SetAngleDirEnd(180.0f);
+		GameParticleSystem::GetInstance(PS_WATER)->Emit(0.1f, m_visibleSize / 2);
 		break;
 	case EventKeyboard::KeyCode::KEY_W:
-		camera->setPosition(camera->getPosition() + Vec2(0, cameraSpeed));
+		GameParticleSystem::GetInstance(PS_STARS)->SetAngleDirEnd(180.0f);
+		GameParticleSystem::GetInstance(PS_STARS)->Emit(0.1f, m_visibleSize / 2);
 		break;
 	case EventKeyboard::KeyCode::KEY_Z:
+		GameParticleSystem::GetInstance(PS_SMOKE)->SetAngleDirEnd(180.0f);
+		GameParticleSystem::GetInstance(PS_SMOKE)->Emit(0.1f, m_visibleSize/2);
+
 		break;
 	case EventKeyboard::KeyCode::KEY_SPACE:
 		if (pillar != nullptr&&pillar->GetStick()->GetState() == START)
@@ -190,7 +226,9 @@ void GameScene::menuGameOverCallback(cocos2d::Ref * pSender)
 
 void GameScene::initGameObject()
 {
-	
+	m_pOnScreenInfoDisplay = OnScreenInfoDisplay::create();
+	this->addChild(m_pOnScreenInfoDisplay);
+
 	m_pZoomingLayer = Layer::create();
 	m_pZoomingLayer2 = Layer::create();
 	m_pZoomingLayer->setAnchorPoint(Vec2(0.5f, 0.0f));
@@ -206,15 +244,19 @@ void GameScene::initGameObject()
 
 	m_pZoomingLayer->addChild(m_pPlatform);
 
+	GameParticleSystem::Init(m_pPlatform);
 
 	m_pCharacter = Character::createCharacter();
 	m_pPlatform->addChild(m_pCharacter);
 	m_pCharacter->setPosition(
 		m_pPlatform->GetCurrentPillar()->getPosition() 
 		+ Vec2(0.0f,m_pPlatform->GetCurrentPillar()->GetHeight()/2+m_pCharacter->GetHeight()/2));
+	m_pCharacter->setGlobalZOrder(GAME_LAYER_1);
 
 	m_pClouds = Clouds::createClouds();
 	m_pZoomingLayer2->addChild(m_pClouds);
 	m_pPlatform->RegisterMoveAlongCallback(m_pClouds);
-	
+
+	m_score = 0;
+
 }

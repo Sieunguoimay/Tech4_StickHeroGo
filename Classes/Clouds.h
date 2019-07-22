@@ -7,6 +7,8 @@
 class Clouds :public SpriteBatchNode, public MiscSupport, public MoveAlongCallback {
 	List<GameSprite*>m_clouds;
 	void generateClouds(const Vec2&offset);
+	float m_selfMovement;
+	float m_floatingSpeed;
 public:
 
 	//Implementation of GameLayer

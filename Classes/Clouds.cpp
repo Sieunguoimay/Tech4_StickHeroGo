@@ -24,12 +24,15 @@ void Clouds::initClouds()
 	for (int i = 0; i < 5; i++)
 		generateClouds(Vec2(0.0f,0.0f));
 	
+	m_floatingSpeed = 4.0f;
+	m_selfMovement = 0;
 	this->m_movingRatio = 0.4f;
 	CCLOG("Clouds Layer Created");
 }
 
 void Clouds::update(float deltaTime)
 {
+	m_selfMovement += m_floatingSpeed*deltaTime;
 	for (auto it = m_clouds.first(); it != m_clouds.tail; it = it->next) {
 		auto pos = this->convertToWorldSpace(it->data->getPosition());
 		auto size = it->data->GetSize();
@@ -45,14 +48,15 @@ void Clouds::update(float deltaTime)
 
 void Clouds::UpdatePosition(const Vec2 & pos)
 {
-	this->setPosition(pos.x*m_movingRatio,_position.y);
+	this->setPosition(pos.x*m_movingRatio-m_selfMovement,_position.y);
 }
 
 void Clouds::ResetPosition()
 {
 	for (auto it = m_clouds.first(); it != m_clouds.tail; it = it->next) 
-		it->data->setPosition(it->data->getPosition() + Vec2(_position.x, 0));
-	this->setPosition(0.0f, _position.y);
+		it->data->setPosition(it->data->getPosition() + Vec2(_position.x - m_selfMovement, 0));
+	this->setPosition(0, _position.y);
+	m_selfMovement = 0;
 }
 
 void Clouds::generateClouds(const Vec2&offset)

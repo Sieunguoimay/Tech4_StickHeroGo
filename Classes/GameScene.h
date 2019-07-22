@@ -6,6 +6,8 @@
 #include"Platform.h"
 #include"Clouds.h"
 #include"Wave.h"
+#include"GameParticleSystem.h"
+#include"OnScreenInfoDisplay.h"
 class GameScene: public GameLayer{
 	CREATE_FUNC(GameScene);
 	
@@ -26,13 +28,17 @@ class GameScene: public GameLayer{
 	void initGameObject();
 
 
-	Layer*m_pZoomingLayer;
-	Layer*m_pZoomingLayer2;
+	Layer*m_pZoomingLayer;//scale variance factor greater
+	Layer*m_pZoomingLayer2;//scale variance factor smaller
+
+	OnScreenInfoDisplay*m_pOnScreenInfoDisplay;
 
 	Platform*m_pPlatform;
 	Character*m_pCharacter;
 	Background*m_pBackground;
 	Clouds*m_pClouds;
+
+	int m_score;
 public:
 	
 	static Scene* createScene();

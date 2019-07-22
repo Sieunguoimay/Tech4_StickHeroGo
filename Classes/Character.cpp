@@ -1,5 +1,5 @@
 #include "Character.h"
-
+#include"GameParticleSystem.h"
 
 Character::~Character()
 {
@@ -21,28 +21,30 @@ Character * Character::createCharacter()
 void Character::initCharacter()
 {
 	this->scheduleUpdate();
-	m_fallNow = false;
+	m_state = CS_LIVE;
 	CCLOG("Player created %d",this->getChildrenCount());
 }
 
 void Character::update(float deltaTime) {
-	if (m_fallNow&&_position.x>= m_fallPoint) {
-		m_fallNow = false;
+	if ((m_state == CS_FALL)&&_position.x>= m_fallPoint) {
+		m_state = CS_FALL_START;
 		this->stopAction(m_moveAction);
 		this->runAction(Sequence::create(
 			MoveBy::create(0.5f, Vec2(0.0f, -_position.y)),
 			CallFunc::create([this]() {
-				CCLOG("GAME OVER");
+				if (m_state == CS_FALLING) m_state = CS_DIED;
 			})
 		,nullptr));
-	}
+	}else if (m_state == CS_FALL_START)m_state = CS_FALLING;
+	else if (m_state == CS_DIED) m_state = CS_DONE;
+	
 }
 
 void Character::MoveToTarget(float distance, float fallDistance)
 {
 	if (fallDistance > 0) {
 		fallDistance += GetWidth() / 2 + 10;
-		m_fallNow = true;
+		m_state = CS_FALL;
 		m_fallPoint = _position.x + fallDistance;
 	}
 

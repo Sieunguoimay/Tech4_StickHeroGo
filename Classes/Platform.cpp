@@ -22,7 +22,7 @@ bool Platform::init()
 	this->scheduleUpdate();
 	//create children here..
 	
-	auto pillar = Pillar::createPillar(this);
+	auto pillar = Pillar::createPillar(this,true);
 	this->addChild(pillar);
 	m_pillars.push_back(pillar);
 	pillar->setPosition(Vec2(m_visibleSize.width / 4, pillar->getContentSize().height / 2));
@@ -107,14 +107,16 @@ float Platform::MoveAndCalculateScale()
 	float distance = target - (-this->_position.x) - m_visibleSize.width/2;
 
 	m_moveFlag = true;
-	this->runAction(Sequence::create(
+
+	m_pMoveAction = Sequence::create(
 		MoveBy::create(1.0f, Vec2(-distance, 0)),
 		CallFunc::create([this]() {
 			m_moveFlag = false;
 			m_nextPillarIndex++;
 			CCLOG("Sequence done");
-		}), nullptr));
+		}), nullptr);
 
+	this->runAction(m_pMoveAction);
 	return scale;
 }
 
