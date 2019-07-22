@@ -256,6 +256,9 @@ void GameScene::initGameObject()
 	m_pClouds = Clouds::createClouds();
 	m_pZoomingLayer2->addChild(m_pClouds);
 	m_pPlatform->RegisterMoveAlongCallback(m_pClouds);
+	m_pPlatform->RegisterMoveAlongCallback(GameParticleSystem::GetInstance(PS_WATER));
+	m_pPlatform->RegisterMoveAlongCallback(GameParticleSystem::GetInstance(PS_SMOKE));
+	m_pPlatform->RegisterMoveAlongCallback(GameParticleSystem::GetInstance(PS_STARS));
 
 	m_score = 0;
 

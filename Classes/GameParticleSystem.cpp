@@ -138,3 +138,9 @@ void GameParticleSystem::putParticle()
 	this->addChild(p);
 
 }
+
+
+
+void GameParticleSystem::ResetPosition() {
+	this->setPosition(0, _position.y);
+}

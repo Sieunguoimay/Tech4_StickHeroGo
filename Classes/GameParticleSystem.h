@@ -2,6 +2,7 @@
 #include"GameSprite.h"
 #include"utils/list.h"
 #include"Particle.h"
+#include"Platform.h"
 enum {
 	PS_STARS,
 	PS_WATER,
@@ -13,7 +14,7 @@ enum ParticleSystemStates {
 	PSS_EMIT,
 	PSS_EMITTED
 };
-class GameParticleSystem :public SpriteBatchNode , public MiscSupport{
+class GameParticleSystem :public SpriteBatchNode , public MiscSupport, public MoveAlongCallback{
 	int m_state;
 	float m_emittingDuration;
 	Vec2 m_pos;
@@ -59,4 +60,7 @@ public:
 	inline GameParticleSystem&SetSize(float size) { m_size = size; return *this; }
 	inline GameParticleSystem&SetEmittingRate(float emittingRate) { m_emittingRate = emittingRate; return *this; }
 	inline GameParticleSystem&SetCallback(std::function<void()>callback) {m_callback = callback; return *this; }
+
+	virtual void UpdatePosition(const Vec2& pos)override{}
+	virtual void ResetPosition()override;
 };
