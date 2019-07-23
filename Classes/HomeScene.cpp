@@ -2,12 +2,14 @@
 
 bool HomeScene::init()
 {
-
 	m_touchListener = EventListenerTouchOneByOne::create();
 	m_touchListener->setSwallowTouches(true);
 	m_touchListener->onTouchBegan = CC_CALLBACK_2(HomeScene::onTouchBegan, this);
 	m_touchListener->onTouchMoved = CC_CALLBACK_2(HomeScene::onTouchMoved, this);
 	m_touchListener->onTouchEnded = CC_CALLBACK_2(HomeScene::onTouchEnded, this);
+
+
+
 	return true;
 }
 

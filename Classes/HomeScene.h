@@ -4,6 +4,7 @@ class HomeScene :public GameLayer {
 	EventListenerTouchOneByOne*m_touchListener;
 public:
 	CREATE_FUNC(HomeScene);
+
 	bool init()override;
 
 	bool onTouchBegan(Touch*touch, Event*ev)override;

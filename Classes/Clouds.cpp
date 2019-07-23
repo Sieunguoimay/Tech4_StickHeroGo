@@ -35,7 +35,6 @@ void Clouds::update(float deltaTime)
 	m_selfMovement += m_floatingSpeed * deltaTime;
 
 	for (auto it = m_clouds.first(); it != m_clouds.tail; it = it->next) {
-
 		auto pos = this->convertToWorldSpace(it->data->getPosition());
 		auto size = it->data->GetSize();
 		if (pos.x + size.width / 2 < 0) {
