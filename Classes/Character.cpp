@@ -1,6 +1,6 @@
 #include "Character.h"
 #include"GameParticleSystem.h"
-
+#include"utils/Definitions.h"
 Character::~Character()
 {
 	CCLOG("Deleted player");
@@ -20,6 +20,7 @@ Character * Character::createCharacter()
 
 void Character::initCharacter()
 {
+	this->setGlobalZOrder(GAME_LAYER_1);
 	this->scheduleUpdate();
 	m_state = CS_LIVE;
 	CCLOG("Player created %d",this->getChildrenCount());

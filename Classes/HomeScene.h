@@ -7,6 +7,7 @@ public:
 class HomeScene :public GameLayer {
 	EventListenerTouchOneByOne*m_touchListener;
 	HomeSceneCallback*m_callback;
+	Label* m_bestScore;
 public:
 	CREATE_FUNC(HomeScene);
 

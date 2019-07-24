@@ -24,13 +24,16 @@ bool Platform::init()
 	
 	auto pillar = Pillar::createPillar(this,true);
 	this->addChild(pillar);
+	pillar->setGlobalZOrder(GAME_LAYER_0);
+
 	m_pillars.push_back(pillar);
-	pillar->setPosition(Vec2(m_visibleSize.width / 4, pillar->getContentSize().height / 2));
+	pillar->setPosition(Vec2(m_visibleSize.width /4+m_visibleSize.width / 4, pillar->getContentSize().height / 2));
 
 	auto pillar2 = Pillar::createPillar(this);
 	this->addChild(pillar2);
+	pillar2->setGlobalZOrder(GAME_LAYER_0);
 	m_pillars.push_back(pillar2);
-	pillar2->setPosition(Vec2(m_visibleSize.width / 4*3, pillar2->getContentSize().height / 2));
+	pillar2->setPosition(Vec2(m_visibleSize.width / 4 + m_visibleSize.width / 4*3, pillar2->getContentSize().height / 2));
 
 	m_nextPillarIndex = 1;
 	m_moveFlag = false;
@@ -56,6 +59,7 @@ void Platform::update(float deltaTime)
 
 		auto pillar = Pillar::createPillar(this);
 		this->addChild(pillar);
+		pillar->setGlobalZOrder(GAME_LAYER_0);
 
 		float r_pos = Utils::map(CCRANDOM_0_1(), 0.0f, 1.0f, 0.0f, 1.0f);
 		float r_size = Utils::map(CCRANDOM_0_1(), 0.0f, 1.0f, 0.4f, 1.5f);
@@ -86,28 +90,20 @@ void Platform::update(float deltaTime)
 float Platform::MoveAndCalculateScale()
 {
 	if (m_moveFlag) return -1.0f;
-
-	auto&pillar1Pos = m_pillars[m_nextPillarIndex]->getPosition();
-	auto&pillar1Size = m_pillars[m_nextPillarIndex]->getContentSize();
+	auto& pillar1Pos = m_pillars[m_nextPillarIndex]->getPosition();
+	auto& pillar1Size = m_pillars[m_nextPillarIndex]->getContentSize();
 	auto pillar1ScaleX = m_pillars[m_nextPillarIndex]->getScaleX();
 
-	auto&pillar2Pos = m_pillars[m_nextPillarIndex+1]->getPosition();
-	auto&pillar2Size = m_pillars[m_nextPillarIndex+1]->getContentSize();
-	auto pillar2ScaleX = m_pillars[m_nextPillarIndex+1]->getScaleX();
+	auto& pillar2Pos = m_pillars[m_nextPillarIndex + 1]->getPosition();
+	auto& pillar2Size = m_pillars[m_nextPillarIndex + 1]->getContentSize();
+	auto pillar2ScaleX = m_pillars[m_nextPillarIndex + 1]->getScaleX();
 
 
+	auto target = 0.5f * (pillar1Pos.x - pillar1Size.width * pillar1ScaleX / 2 + pillar2Pos.x + pillar2Size.width * pillar2ScaleX / 2);
+	float distance = target - (-this->_position.x) - m_visibleSize.width / 2;
 
-
-	float pillarDistance = std::abs(pillar1Pos.x - pillar2Pos.x) + pillar1Size.width*pillar1ScaleX / 2 + pillar2Size.width*pillar2ScaleX / 2+ pillar2Size.width;
-	float scale = std::min(1.0f, m_visibleSize.width / pillarDistance);
-
-
-
-	auto target = 0.5f*(pillar1Pos.x-pillar1Size.width*pillar1ScaleX/2 + pillar2Pos.x+pillar2Size.width*pillar2ScaleX/2);
-	float distance = target - (-this->_position.x) - m_visibleSize.width/2;
 
 	m_moveFlag = true;
-
 	m_pMoveAction = Sequence::create(
 		MoveBy::create(1.0f, Vec2(-distance, 0)),
 		CallFunc::create([this]() {
@@ -117,8 +113,30 @@ float Platform::MoveAndCalculateScale()
 		}), nullptr);
 
 	this->runAction(m_pMoveAction);
+
+
+
+	float pillarDistance = std::abs(pillar1Pos.x - pillar2Pos.x) + pillar1Size.width * pillar1ScaleX / 2 + pillar2Size.width * pillar2ScaleX / 2 + pillar2Size.width;
+	float scale = std::min(1.0f, m_visibleSize.width / pillarDistance);
 	return scale;
 }
+
+void Platform::FirstMovementOnGameStart()
+{
+	auto& pillar1Pos = m_pillars[0]->getPosition();
+	auto& pillar1Size = m_pillars[0]->getContentSize();
+	auto pillar1ScaleX = m_pillars[0]->getScaleX();
+
+	auto& pillar2Pos = m_pillars[1]->getPosition();
+	auto& pillar2Size = m_pillars[1]->getContentSize();
+	auto pillar2ScaleX = m_pillars[1]->getScaleX();
+
+	auto target = 0.5f * (pillar1Pos.x - pillar1Size.width * pillar1ScaleX / 2 + pillar2Pos.x + pillar2Size.width * pillar2ScaleX / 2);
+	float distance = target - (-this->_position.x) - m_visibleSize.width / 2;
+
+	this->runAction(MoveBy::create(0.5f, Vec2(-distance,0.0f)));
+}
+
 
 void Platform::resetPosition()
 {

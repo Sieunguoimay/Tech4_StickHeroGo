@@ -44,6 +44,7 @@ void GameParticleSystem::initParticleSystem()
 	m_angleDirStart = 0.0f;
 	m_angleDirEnd = 360.0f;
 	m_size = 20.0f;
+	m_scaleVar = 1.0f;
 	m_emittingRate = Director::getInstance()->getFrameRate();
 	m_distanceVar = 20.0f;
 	m_callback = nullptr;
@@ -100,7 +101,7 @@ void GameParticleSystem::putParticle()
 	float r_distance = Utils::map(CCRANDOM_0_1(), 0.0f, 1.0f, m_meanDistance- m_distanceVar / 2, m_meanDistance + m_distanceVar / 2);
 	float r_angleDir = Utils::map(CCRANDOM_0_1(), 0.0f, 1.0f, m_angleDirStart , m_angleDirEnd);
 	float r_pos = Utils::map(CCRANDOM_0_1(), 0.0f, 1.0f, 0.0f, 20.0f);
-	float r_scale = Utils::map(CCRANDOM_0_1(), 0.0f, 1.0f, 0.5f, 1.2f);
+	float r_scale = Utils::map(CCRANDOM_0_1(), 0.0f, 1.0f, 1.0f-m_scaleVar/2, 1.0f+ m_scaleVar/2);
 
 
 	Vec2 dir(std::cos(CC_DEGREES_TO_RADIANS(r_angleDir)), std::sin(CC_DEGREES_TO_RADIANS(r_angleDir)));

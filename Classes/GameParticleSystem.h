@@ -24,6 +24,7 @@ class GameParticleSystem :public SpriteBatchNode , public MiscSupport, public Mo
 
 	float m_emittingRate;
 	float m_size;
+	float m_scaleVar;
 	float m_meanTime ;
 	float m_meanDistance ;
 	float m_distanceVar;
@@ -48,7 +49,8 @@ public:
 	inline GameParticleSystem&SetColor(byte r, byte b, byte g) { m_colorOverlay.r = r; m_colorOverlay.b = b; m_colorOverlay.g = g; return *this;}
 	inline GameParticleSystem&SetAngleDirStart(float angle) { m_angleDirStart = angle; return *this;}
 	inline GameParticleSystem&SetAngleDirEnd(float angle) { m_angleDirEnd = angle; return *this; }
-	inline GameParticleSystem&SetSize(float size) { m_size = size; return *this; }
+	inline GameParticleSystem& SetSize(float size) { m_size = size; return *this; }
+	inline GameParticleSystem&SetScaleVar(float scaleVar) { m_scaleVar = scaleVar; return *this; }
 	inline GameParticleSystem&SetEmittingRate(float emittingRate) { m_emittingRate = emittingRate; return *this; }
 	inline GameParticleSystem&SetCallback(std::function<void()>callback) {m_callback = callback; return *this; }
 

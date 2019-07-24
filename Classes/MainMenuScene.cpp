@@ -52,22 +52,20 @@ bool MainMenu::init()
         return false;
     }
 
-    auto visibleSize = Director::getInstance()->getVisibleSize();
-    Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
 
-	auto playButton = MenuItemImage::create("cloud.png", "cloud.png", CC_CALLBACK_1(MainMenu::menuEnterGameCallback, this));
-	playButton->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2);
-    auto menu = Menu::create(playButton,NULL);
-    menu->setPosition(Vec2::ZERO);
-    this->addChild(menu, 1);
+	//auto playButton = MenuItemImage::create("cloud.png", "cloud.png", CC_CALLBACK_1(MainMenu::menuEnterGameCallback, this));
+	//playButton->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2);
+ //   auto menu = Menu::create(playButton,NULL);
+ //   menu->setPosition(Vec2::ZERO);
+ //   this->addChild(menu, 1);
 
 	auto background = Sprite::create("sky.png");
 	if (background == nullptr) {
 		CCLOG("Error: failed to load file sky.png");
 	}
 	else {
-		background->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2);
+		background->setPosition(m_origin + m_visibleSize/2);
 		addChild(background);
 	}
 

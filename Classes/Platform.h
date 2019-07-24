@@ -29,8 +29,10 @@ public:
 	//public usage
 	float MoveAndCalculateScale();
 	inline Pillar*GetCurrentPillar() { if (m_nextPillarIndex >0)return m_pillars[m_nextPillarIndex - 1]; return nullptr; }
-	inline Pillar*GetNextPillar() { if (m_nextPillarIndex >=0)return m_pillars[m_nextPillarIndex]; return nullptr; }
+	inline Pillar* GetNextPillar() { if (m_nextPillarIndex >= 0)return m_pillars[m_nextPillarIndex]; return nullptr; }
+	inline Pillar*GetFirstPillar() { return m_pillars[0]; }
 	inline void RegisterMoveAlongCallback(MoveAlongCallback*callback) { m_callbacks.push_back(callback); }
 	inline void StopMoving(){this->stopAction(m_pMoveAction); }
+	void FirstMovementOnGameStart();
 };
 

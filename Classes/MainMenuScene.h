@@ -25,9 +25,9 @@
 #ifndef __MAINMENU_SCENE_H__
 #define __MAINMENU_SCENE_H__
 
-#include "cocos2d.h"
+#include"GameLayer.h"
 
-class MainMenu : public cocos2d::Layer
+class MainMenu : public GameLayer
 {
 public:
     static cocos2d::Scene* createScene();

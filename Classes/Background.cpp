@@ -45,7 +45,7 @@ bool Background::initBackground(Layer*pZoomingLayer, Platform*pPlatform)
 	m_pWave1 = Wave::createWave("wave1.png",100.0f,0.6f,1.0f);
 	pZoomingLayer->addChild(m_pWave1);
 	pPlatform->RegisterMoveAlongCallback(m_pWave1);
-	m_pWave1->setGlobalZOrder(GAME_LAYER_1);
+	m_pWave1->setGlobalZOrder(GAME_LAYER_2);
 
 	CCLOG("Created background %d",this->getChildrenCount());
 	return true;

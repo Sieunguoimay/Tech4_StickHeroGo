@@ -66,7 +66,9 @@ void GameScene::update(float deltaTime)
 
 		if (score > 0) {
 			nextPillar->RemoveRect();
-			 
+			
+			m_pOnScreenInfoDisplay->ShowRewardForEachPillar(1);
+
 			m_score += score;
 			m_pOnScreenInfoDisplay->SetScore(m_score);
 
@@ -205,7 +207,13 @@ void GameScene::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::
 void GameScene::OnPlayButtonClicked()
 {
 	m_pHomeScene->Hide();
+	
+	CCLOG("Start game from here...");
+	
 	_eventDispatcher->resumeEventListenersForTarget(this);
+	m_pOnScreenInfoDisplay->setVisible(true);
+	m_pPlatform->FirstMovementOnGameStart();
+	m_pCharacter->MoveToTarget(m_pPlatform->GetFirstPillar()->GetTopRightPoint().x - m_pCharacter->getContentSize().width / 2 - m_pCharacter->getPosition().x,0.0f);
 }
 
 
@@ -240,21 +248,22 @@ void GameScene::menuGameOverCallback(cocos2d::Ref * pSender)
 
 void GameScene::initGameObject()
 {
-	m_pOnScreenInfoDisplay = OnScreenInfoDisplay::create();
-	this->addChild(m_pOnScreenInfoDisplay);
+
+
+
 
 	m_pZoomingLayer = Layer::create();
 	m_pZoomingLayer2 = Layer::create();
 	m_pZoomingLayer->setAnchorPoint(Vec2(0.5f, 0.0f));
 	m_pZoomingLayer2->setAnchorPoint(Vec2(0.5f, 0.0f));
-	this->addChild(m_pZoomingLayer);
-	this->addChild(m_pZoomingLayer2);
+	this->addChild(m_pZoomingLayer,GAME_LAYER_0);
+	this->addChild(m_pZoomingLayer2, GAME_LAYER_0);
 	
 
 	m_pPlatform = Platform::createPlatform();
 
 	m_pBackground = Background::createBackground(m_pZoomingLayer, m_pPlatform);
-	this->addChild(m_pBackground);
+	this->addChild(m_pBackground, GAME_LAYER_NEG_2);
 
 	m_pZoomingLayer->addChild(m_pPlatform);
 
@@ -268,7 +277,6 @@ void GameScene::initGameObject()
 	m_pCharacter->setPosition(
 		m_pPlatform->GetCurrentPillar()->getPosition() 
 		+ Vec2(0.0f,m_pPlatform->GetCurrentPillar()->GetHeight()/2+m_pCharacter->GetHeight()/2));
-	m_pCharacter->setGlobalZOrder(GAME_LAYER_1);
 
 	m_pClouds = Clouds::createClouds();
 	m_pZoomingLayer2->addChild(m_pClouds);
@@ -277,13 +285,21 @@ void GameScene::initGameObject()
 	m_pPlatform->RegisterMoveAlongCallback(m_particleSystems[PS_SMOKE]);
 	m_pPlatform->RegisterMoveAlongCallback(m_particleSystems[PS_STARS]);
 
-	m_score = 0;
+
+
+
 
 	m_pHomeScene = HomeScene::create();
-	this->addChild(m_pHomeScene);
+	this->addChild(m_pHomeScene, GAME_LAYER_3);
 	m_pHomeScene->SetCallback(this);
 	m_pHomeScene->Show();
 	_eventDispatcher->pauseEventListenersForTarget(this);
+
+	m_score = 0;
+
+	m_pOnScreenInfoDisplay = OnScreenInfoDisplay::create();
+	this->addChild(m_pOnScreenInfoDisplay, GAME_LAYER_3);
+	m_pOnScreenInfoDisplay->setVisible(false);
 }
 
 void GameScene::onGameover()
