@@ -15,6 +15,8 @@ public:
 	void initPillar(GameLayer*layer, bool hasNoRect);
 	void setPosition(const Vec2&pos)override;
 
+	void SetFlag(int number);
+
 	//public usage
 	bool HasDone();
 	bool ReadyForSpawning();

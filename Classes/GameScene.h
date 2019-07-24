@@ -45,6 +45,7 @@ class GameScene: public GameLayer, public HomeSceneCallback{
 	Clouds*m_pClouds;
 
 	int m_score;
+	int m_perfectCount;
 public:
 	
 	static Scene* createScene();

@@ -32,6 +32,8 @@ void Pillar::initPillar(GameLayer*layer, bool hasNoRect)
 		m_rect->setPosition(_position + Vec2(GetWidth() / 2, GetHeight()));
 		this->addChild(m_rect);
 	}else m_rect = nullptr;
+
+	SetFlag(0);
 	CCLOG("Pillar created %d",this->getChildrenCount());
 }
 
@@ -39,6 +41,13 @@ void Pillar::setPosition(const Vec2 & pos)
 {
 	GameSprite::setPosition(pos);
 	m_pStick->setPosition(this->GetTopRightPoint());
+}
+
+void Pillar::SetFlag(int number)
+{
+	auto flag = Sprite::create("flag.png");
+	this->addChild(flag);
+	flag->setPosition(this->GetTopRightPoint() -Vec2(GetWidth()/2,0.0f) + flag->getContentSize()*flag->getScaleX());
 }
 
 

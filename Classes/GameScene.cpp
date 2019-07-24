@@ -58,26 +58,34 @@ void GameScene::update(float deltaTime)
 		float distanceFromCenter = std::min(std::abs(perfectLength - stickLength), nextPillarHalfWidth);
 
 		int score = 0;// Utils::map(distanceFromCenter, 0.0f, nextPillarHalfWidth, MAX_SCORE_FOR_ONE_PILLAR, 0.0f);
-		if (distanceFromCenter <= nextPillar->GetWidth1()) score = 16;
-		else if (distanceFromCenter <= nextPillar->GetWidth2()) score = 8;
-		else if (distanceFromCenter < nextPillarHalfWidth) score = 4;
+		if (distanceFromCenter <= nextPillar->GetWidth1()) score = 4;
+		else if (distanceFromCenter <= nextPillar->GetWidth2()) score = 3;
+		else if (distanceFromCenter < nextPillarHalfWidth) score = 2;
 
-		CCLOG("Score %d",score);
 
 		if (score > 0) {
 			nextPillar->RemoveRect();
 			
-			m_pOnScreenInfoDisplay->ShowRewardForEachPillar(1);
 
-			m_score += score;
+			
+
+			int gainScore = pow(2, score);
+
+			if (score == 4) m_perfectCount++;
+			else m_perfectCount = 0;
+			if (m_perfectCount > 1) gainScore += pow(2, m_perfectCount);
+			
+			m_score += gainScore;
+
+
+			m_pOnScreenInfoDisplay->ShowRewardForEachPillar(score - 2, m_perfectCount,gainScore);
+
 			m_pOnScreenInfoDisplay->SetScore(m_score);
 
-			auto ps_pos = Vec2(pillar->GetStick()->getPosition().x + pillar->GetStick()->GetLength(),
-				pillar->GetTopRightPoint().y);
+			auto ps_pos = Vec2(pillar->GetStick()->getPosition().x + pillar->GetStick()->GetLength(), pillar->GetTopRightPoint().y);
 			m_particleSystems[PS_SMOKE]->SetAngleDirEnd(180.0f).Emit(0.2f, ps_pos);
 			m_particleSystems[PS_STARS]->SetAngleDirEnd(180.0f).SetColor(255,200,0).Emit(0.2f, ps_pos);
 		}
-
 
 		m_pCharacter->MoveToTarget(
 			nextPillar->GetTopRightPoint().x - m_pCharacter->getContentSize().width / 2
@@ -296,6 +304,7 @@ void GameScene::initGameObject()
 	_eventDispatcher->pauseEventListenersForTarget(this);
 
 	m_score = 0;
+	m_perfectCount = 0;
 
 	m_pOnScreenInfoDisplay = OnScreenInfoDisplay::create();
 	this->addChild(m_pOnScreenInfoDisplay, GAME_LAYER_3);
