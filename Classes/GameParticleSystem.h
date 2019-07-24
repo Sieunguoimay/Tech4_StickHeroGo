@@ -31,22 +31,13 @@ class GameParticleSystem :public SpriteBatchNode , public MiscSupport, public Mo
 
 	std::function<void()>m_callback;
 
-	GameParticleSystem&operator=(const GameParticleSystem&);
-	GameParticleSystem(const GameParticleSystem&);
-	GameParticleSystem(){}
 
-	static GameParticleSystem* s_instances[PS_TOTAL_NUM];
-	static GameParticleSystem* createParticleSystem(const char*source_texture);
 	void initParticleSystem();
 
 
-	static Layer*s_pParentLayer;
 public:
-
-	static GameParticleSystem*GetInstance(int type);
-	static void Init(Layer*parent) { s_pParentLayer = parent; }
-	static void CleanUp();
-
+	static GameParticleSystem* createParticleSystemByType(int type);
+	static GameParticleSystem* createParticleSystem(const char*source_texture);
 	~GameParticleSystem()override;
 	void update(float deltaTime)override;
 	void Emit(float duration, const Vec2&pos);

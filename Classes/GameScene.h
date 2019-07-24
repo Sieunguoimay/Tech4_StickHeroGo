@@ -9,7 +9,7 @@
 #include"GameParticleSystem.h"
 #include"OnScreenInfoDisplay.h"
 #include"HomeScene.h"
-class GameScene: public GameLayer{
+class GameScene: public GameLayer, public HomeSceneCallback{
 	CREATE_FUNC(GameScene);
 	
 
@@ -21,8 +21,7 @@ class GameScene: public GameLayer{
 	void onKeyPressed(EventKeyboard::KeyCode keyCode, Event*event)override;
 	void onKeyReleased(EventKeyboard::KeyCode keyCode, Event*event)override;
 
-	void showHomeScene();
-	void hideHomeScene();
+	void OnPlayButtonClicked()override;
 
 
 	void setupMenu();
@@ -30,7 +29,7 @@ class GameScene: public GameLayer{
 	void menuGameOverCallback(Ref*pSender);
 
 	void initGameObject();
-
+	void onGameover();
 
 	Layer*m_pZoomingLayer;//scale variance factor greater
 	Layer*m_pZoomingLayer2;//scale variance factor smaller
@@ -39,6 +38,7 @@ class GameScene: public GameLayer{
 	HomeScene*m_pHomeScene;
 	EventListenerTouchOneByOne*m_touchListener;
 
+	GameParticleSystem*m_particleSystems[PS_TOTAL_NUM];
 	Platform*m_pPlatform;
 	Character*m_pCharacter;
 	Background*m_pBackground;

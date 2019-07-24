@@ -13,7 +13,6 @@ Scene * GameScene::createScene()
 
 GameScene::~GameScene()
 {
-	GameParticleSystem::CleanUp();
 	CCLOG("GameScene Deleted");
 }
 
@@ -73,8 +72,8 @@ void GameScene::update(float deltaTime)
 
 			auto ps_pos = Vec2(pillar->GetStick()->getPosition().x + pillar->GetStick()->GetLength(),
 				pillar->GetTopRightPoint().y);
-			GameParticleSystem::GetInstance(PS_SMOKE)->SetAngleDirEnd(180.0f).Emit(0.2f, ps_pos);
-			GameParticleSystem::GetInstance(PS_STARS)->SetAngleDirEnd(180.0f).SetColor(255,200,0).Emit(0.2f, ps_pos);
+			m_particleSystems[PS_SMOKE]->SetAngleDirEnd(180.0f).Emit(0.2f, ps_pos);
+			m_particleSystems[PS_STARS]->SetAngleDirEnd(180.0f).SetColor(255,200,0).Emit(0.2f, ps_pos);
 		}
 
 
@@ -89,14 +88,15 @@ void GameScene::update(float deltaTime)
 		CCLOG("CS_FALL_START");
 	}
 	if (m_pCharacter->GetState() == CharacterState::CS_DIED) {
-		CCLOG("GAME OVER");
-		GameParticleSystem::GetInstance(PS_WATER)
+
+		m_particleSystems[PS_WATER]
 			->SetMeanDistance(70.0f).SetDistanceVar(65.0f).SetMeanTime(0.7f).SetAngleDirEnd(180.0f).SetAngleDirStart(0.0f).SetSize(15.0f)
 			.SetEmittingRate(200.0f)
 			.SetCallback([this]() {
-				Director::getInstance()->popScene();
+				onGameover();
 			})
 			.Emit(0.1f, m_pCharacter->getPosition()+Vec2(0.0f,m_pCharacter->GetHeight()/2));
+
 	}
 }
 
@@ -128,7 +128,7 @@ void GameScene::setupEventHandler()
 
 bool GameScene::onTouchBegan(cocos2d::Touch * touch, cocos2d::Event * ev)
 {
-	GameParticleSystem::GetInstance(PS_SMOKE)->Emit(0.1f, touch->getLocation());
+	m_particleSystems[PS_SMOKE]->Emit(0.1f, touch->getLocation());
 	return true;
 }
 
@@ -156,16 +156,16 @@ void GameScene::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::E
 	case EventKeyboard::KeyCode::KEY_D:
 		break;
 	case EventKeyboard::KeyCode::KEY_S:
-		GameParticleSystem::GetInstance(PS_WATER)->SetAngleDirEnd(180.0f);
-		GameParticleSystem::GetInstance(PS_WATER)->Emit(0.1f, m_visibleSize / 2);
+		m_particleSystems[PS_WATER]->SetAngleDirEnd(180.0f);
+		m_particleSystems[PS_WATER]->Emit(0.1f, m_visibleSize / 2);
 		break;
 	case EventKeyboard::KeyCode::KEY_W:
-		GameParticleSystem::GetInstance(PS_STARS)->SetAngleDirEnd(180.0f);
-		GameParticleSystem::GetInstance(PS_STARS)->Emit(0.1f, m_visibleSize / 2);
+		m_particleSystems[PS_STARS]->SetAngleDirEnd(180.0f);
+		m_particleSystems[PS_STARS]->Emit(0.1f, m_visibleSize / 2);
 		break;
 	case EventKeyboard::KeyCode::KEY_Z:
-		GameParticleSystem::GetInstance(PS_SMOKE)->SetAngleDirEnd(180.0f);
-		GameParticleSystem::GetInstance(PS_SMOKE)->Emit(0.1f, m_visibleSize/2);
+		m_particleSystems[PS_SMOKE]->SetAngleDirEnd(180.0f);
+		m_particleSystems[PS_SMOKE]->Emit(0.1f, m_visibleSize / 2);
 
 		break;
 	case EventKeyboard::KeyCode::KEY_SPACE:
@@ -196,13 +196,19 @@ void GameScene::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::
 	}
 }
 
-void GameScene::showHomeScene()
+
+
+
+
+
+
+void GameScene::OnPlayButtonClicked()
 {
+	m_pHomeScene->Hide();
+	_eventDispatcher->resumeEventListenersForTarget(this);
 }
 
-void GameScene::hideHomeScene()
-{
-}
+
 
 void GameScene::setupMenu()
 {
@@ -252,7 +258,10 @@ void GameScene::initGameObject()
 
 	m_pZoomingLayer->addChild(m_pPlatform);
 
-	GameParticleSystem::Init(m_pPlatform);
+	for (int i = 0; i < PS_TOTAL_NUM; i++) {
+		m_particleSystems[i] = GameParticleSystem::createParticleSystemByType(i);
+		m_pPlatform->addChild(m_particleSystems[i]);
+	}
 
 	m_pCharacter = Character::createCharacter();
 	m_pPlatform->addChild(m_pCharacter);
@@ -264,14 +273,22 @@ void GameScene::initGameObject()
 	m_pClouds = Clouds::createClouds();
 	m_pZoomingLayer2->addChild(m_pClouds);
 	m_pPlatform->RegisterMoveAlongCallback(m_pClouds);
-	m_pPlatform->RegisterMoveAlongCallback(GameParticleSystem::GetInstance(PS_WATER));
-	m_pPlatform->RegisterMoveAlongCallback(GameParticleSystem::GetInstance(PS_SMOKE));
-	m_pPlatform->RegisterMoveAlongCallback(GameParticleSystem::GetInstance(PS_STARS));
+	m_pPlatform->RegisterMoveAlongCallback(m_particleSystems[PS_WATER]);
+	m_pPlatform->RegisterMoveAlongCallback(m_particleSystems[PS_SMOKE]);
+	m_pPlatform->RegisterMoveAlongCallback(m_particleSystems[PS_STARS]);
 
 	m_score = 0;
 
 	m_pHomeScene = HomeScene::create();
 	this->addChild(m_pHomeScene);
-	_eventDispatcher->removeEventListener(m_touchListener);
-	m_pHomeScene->AddTouchListener();
+	m_pHomeScene->SetCallback(this);
+	m_pHomeScene->Show();
+	_eventDispatcher->pauseEventListenersForTarget(this);
+}
+
+void GameScene::onGameover()
+{
+	Director::getInstance()->popScene();
+	CCLOG("GAME OVER");
+	Director::getInstance()->pushScene(GameScene::createScene());
 }

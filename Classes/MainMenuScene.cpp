@@ -71,6 +71,11 @@ bool MainMenu::init()
 		addChild(background);
 	}
 
+	this->runAction(Sequence::create(DelayTime::create(1.0f), CallFunc::create([]() {
+		Director::getInstance()->pushScene(GameScene::createScene());
+	}), nullptr));
+
+	CCLOG("MainMenu created");
     return true;
 }
 

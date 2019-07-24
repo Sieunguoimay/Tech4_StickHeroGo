@@ -1,41 +1,27 @@
 #include "GameParticleSystem.h"
 #include"utils/Utils.h"
 #include"utils/Definitions.h"
-GameParticleSystem* GameParticleSystem::s_instances[PS_TOTAL_NUM] = { nullptr };
-Layer*GameParticleSystem::s_pParentLayer = nullptr;
 
-GameParticleSystem * GameParticleSystem::GetInstance(int type)
+
+
+
+GameParticleSystem * GameParticleSystem::createParticleSystemByType(int type)
 {
-	if (type > PS_TOTAL_NUM) return nullptr;
-	if (s_instances[type] == nullptr) {
-		switch (type) {
-		case PS_STARS: 
-			s_instances[type] = createParticleSystem("particle_texture.png");
-			break;
-		case PS_SMOKE:
-			s_instances[type] = createParticleSystem("particle_texture_smoke.png");
-			break;
-		case PS_WATER:
-			s_instances[type] = createParticleSystem("particle_texture_water.png");
-			break;
-		}
-		s_pParentLayer->addChild(s_instances[type]);
-		s_instances[type]->setGlobalZOrder(GAME_LAYER_2);
+	GameParticleSystem*temp = nullptr;
+	switch (type) {
+	case PS_STARS:
+		temp = createParticleSystem("particle_texture.png");
+		break;
+	case PS_SMOKE:
+		temp = createParticleSystem("particle_texture_smoke.png");
+		break;
+	case PS_WATER:
+		temp = createParticleSystem("particle_texture_water.png");
+		break;
 	}
-	return s_instances[type];
+	temp->setGlobalZOrder(GAME_LAYER_2);
+	return temp;
 }
-
-void GameParticleSystem::CleanUp()
-{
-	for (int i = 0; i < PS_TOTAL_NUM; i++) {
-		s_pParentLayer->removeChild(s_instances[i], true);
-		s_instances[i] = nullptr;
-	}
-}
-
-
-
-
 
 GameParticleSystem * GameParticleSystem::createParticleSystem(const char * source_texture)
 {
