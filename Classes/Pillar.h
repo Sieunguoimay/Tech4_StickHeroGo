@@ -12,10 +12,12 @@ class Pillar: public GameSprite{
 public:
 	static Pillar*createPillar(GameLayer*layer,bool hasNoRect = false);
 	~Pillar()override;
-	void initPillar(GameLayer*layer, bool hasNoRect);
+	void initPillar(GameLayer*layer,const Vec2&pos,float scaleX, bool hasNoRect, int flagNumber);
+
 	void setPosition(const Vec2&pos)override;
 
-	void SetFlag(int number);
+
+	void SetFlag();
 
 	//public usage
 	bool HasDone();

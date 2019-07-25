@@ -26,9 +26,6 @@ class OnScreenInfoDisplay :public GameLayer{
 	Label*m_pTextScore;
 
 	Reward* m_rewards[ST_TOTAL_NUM];
-	//Sprite* m_rewardBgs[ST_TOTAL_NUM];
-	//Label* m_rewardLabels[ST_TOTAL_NUM];
-	
 
 	GameParticleSystem* m_pStarParticleSystem;
 public:

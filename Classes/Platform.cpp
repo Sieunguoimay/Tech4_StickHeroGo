@@ -24,16 +24,15 @@ bool Platform::init()
 	
 	auto pillar = Pillar::createPillar(this,true);
 	this->addChild(pillar);
-	pillar->setGlobalZOrder(GAME_LAYER_0);
-
+	pillar->initPillar(this, Vec2(m_visibleSize.width / 4 + m_visibleSize.width / 4, pillar->getContentSize().height / 2)
+	,1.0f,true,0);
 	m_pillars.push_back(pillar);
-	pillar->setPosition(Vec2(m_visibleSize.width /4+m_visibleSize.width / 4, pillar->getContentSize().height / 2));
 
 	auto pillar2 = Pillar::createPillar(this);
 	this->addChild(pillar2);
-	pillar2->setGlobalZOrder(GAME_LAYER_0);
+	pillar2->initPillar(this,Vec2(m_visibleSize.width / 4 + m_visibleSize.width / 4*3, pillar2->getContentSize().height / 2)
+	,1.0f,false,1);
 	m_pillars.push_back(pillar2);
-	pillar2->setPosition(Vec2(m_visibleSize.width / 4 + m_visibleSize.width / 4*3, pillar2->getContentSize().height / 2));
 
 	m_nextPillarIndex = 1;
 	m_moveFlag = false;
@@ -57,16 +56,17 @@ void Platform::update(float deltaTime)
 	if (m_pillars.back()->ReadyForSpawning()) {
 
 
+		
+
 		auto pillar = Pillar::createPillar(this);
 		this->addChild(pillar);
-		pillar->setGlobalZOrder(GAME_LAYER_0);
 
 		float r_pos = Utils::map(CCRANDOM_0_1(), 0.0f, 1.0f, 0.0f, 1.0f);
 		float r_size = Utils::map(CCRANDOM_0_1(), 0.0f, 1.0f, 0.4f, 1.5f);
 
 		float deltaOffScreenOfTheLastPillar = std::max(
-			m_pillars.back()->getPosition().x + m_pillars.back()->GetWidth() / 2 
-				+ _position.x - m_visibleSize.width, 0.0f);
+			m_pillars.back()->getPosition().x + m_pillars.back()->GetWidth() / 2
+			+ _position.x - m_visibleSize.width, 0.0f);
 		Vec2 pos(
 			-_position.x + m_visibleSize.width +
 			deltaOffScreenOfTheLastPillar +
@@ -74,9 +74,8 @@ void Platform::update(float deltaTime)
 			m_visibleSize.width*r_pos,
 			pillar->getContentSize().height / 2);
 
-		pillar->setScaleX(r_size);
-		pillar->setPosition(pos);
 
+		pillar->initPillar(this, pos, r_size,false,10);
 		m_pillars.push_back(pillar);
 
 
