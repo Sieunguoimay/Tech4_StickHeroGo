@@ -54,3 +54,10 @@ void HomeScene::OnPlayButtonClicked()
 	if(m_callback!=nullptr)
 		m_callback->OnPlayButtonClicked();
 }
+
+void HomeScene::SetBestScore(int score)
+{
+	char s[10];
+	sprintf(s, "BEST %d", score);
+	m_bestScore->setString(s);
+}

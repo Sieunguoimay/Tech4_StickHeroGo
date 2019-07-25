@@ -1,7 +1,7 @@
 #pragma once
 #include"GameSprite.h"
 #include"Wave.h"
-
+#include"RandFloatingOnLineSprites.h"
 
 
 class Background:public GameSprite{
@@ -13,9 +13,10 @@ class Background:public GameSprite{
 	Wave*m_pWave2;
 	Wave*m_pWave3;
 
-	//List<Cloud*>m_pClouds;
+	SpriteBatchNode* m_mountainTexture;
+	std::vector<GameSprite*>m_mountains;
 
-	//void generateCloud(bool atCreateTime = false);
+	RandFloatingOnLineSprites* m_pMountain;
 
 public:
 	static Background*createBackground(Layer*pZoomingLayer,Platform*pPlatform);

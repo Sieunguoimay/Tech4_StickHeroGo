@@ -34,4 +34,5 @@ public:
 	~OnScreenInfoDisplay()override;
 	void SetScore(int score) { m_pTextScore->setString(std::to_string(score)); }
 	void ShowRewardForEachPillar(int reward,int perfectCount,int gainScore);
+	void SetHighScore(int highScore);
 };

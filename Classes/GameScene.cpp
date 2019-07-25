@@ -71,25 +71,25 @@ void GameScene::update(float deltaTime)
 
 			int gainScore = pow(2, score);
 
-			if (score == 4) m_perfectCount++;
-			else m_perfectCount = 0;
-			if (m_perfectCount > 1) gainScore += pow(2, m_perfectCount);
+			if (score == 4) m_scoreManager.IncPerfectCount();
+			else m_scoreManager.SetPerfectCount(0);
+
+			if (m_scoreManager.GetPerfectCount()> 1) gainScore += pow(2, m_scoreManager.GetPerfectCount());
 			
-			m_score += gainScore;
+			m_scoreManager.AddScore(gainScore);
 
 
-			m_pOnScreenInfoDisplay->ShowRewardForEachPillar(score - 2, m_perfectCount,gainScore);
+			m_pOnScreenInfoDisplay->ShowRewardForEachPillar(score - 2, m_scoreManager.GetPerfectCount(),gainScore);
 
-			m_pOnScreenInfoDisplay->SetScore(m_score);
+			m_pOnScreenInfoDisplay->SetScore(m_scoreManager.GetScore());
 
 			auto ps_pos = Vec2(pillar->GetStick()->getPosition().x + pillar->GetStick()->GetLength(), pillar->GetTopRightPoint().y);
 			m_particleSystems[PS_SMOKE]->SetAngleDirEnd(180.0f).Emit(0.2f, ps_pos);
-			m_particleSystems[PS_STARS]->SetAngleDirEnd(180.0f).SetColor(255,200,0).Emit(0.2f, ps_pos);
+			m_particleSystems[PS_STARS]->SetAngleDirEnd(180.0f).SetSize(15).SetColor(235, 159, 159).Emit(0.1f, ps_pos);
 		}
 
 		m_pCharacter->MoveToTarget(
-			nextPillar->GetTopRightPoint().x - m_pCharacter->getContentSize().width / 2
-			- m_pCharacter->getPosition().x ,
+			nextPillar->GetTopRightPoint().x - m_pCharacter->getContentSize().width / 2 - m_pCharacter->getPosition().x -5,
 			(score>0?-1.0f: pillar->GetTopRightPoint().x + stickLength - m_pCharacter->getPosition().x));
 
 	}
@@ -221,8 +221,8 @@ void GameScene::OnPlayButtonClicked()
 	_eventDispatcher->resumeEventListenersForTarget(this);
 	m_pOnScreenInfoDisplay->setVisible(true);
 	m_pPlatform->FirstMovementOnGameStart();
-	m_pCharacter->MoveToTarget(m_pPlatform->GetFirstPillar()->GetTopRightPoint().x - m_pCharacter->getContentSize().width / 2 - m_pCharacter->getPosition().x,0.0f);
-}
+	m_pCharacter->MoveToTarget(m_pPlatform->GetFirstPillar()->GetTopRightPoint().x - m_pCharacter->getContentSize().width / 2 - m_pCharacter->getPosition().x - 5,0.0f);
+} 
 
 
 
@@ -264,7 +264,7 @@ void GameScene::initGameObject()
 	m_pZoomingLayer2 = Layer::create();
 	m_pZoomingLayer->setAnchorPoint(Vec2(0.5f, 0.0f));
 	m_pZoomingLayer2->setAnchorPoint(Vec2(0.5f, 0.0f));
-	this->addChild(m_pZoomingLayer,GAME_LAYER_0);
+	this->addChild(m_pZoomingLayer,GAME_LAYER_NEG_1);
 	this->addChild(m_pZoomingLayer2, GAME_LAYER_0);
 	
 
@@ -272,13 +272,14 @@ void GameScene::initGameObject()
 
 	m_pBackground = Background::createBackground(m_pZoomingLayer, m_pPlatform);
 	this->addChild(m_pBackground, GAME_LAYER_NEG_2);
-
 	m_pZoomingLayer->addChild(m_pPlatform);
 
 	for (int i = 0; i < PS_TOTAL_NUM; i++) {
 		m_particleSystems[i] = GameParticleSystem::createParticleSystemByType(i);
-		m_pPlatform->addChild(m_particleSystems[i]);
+		m_pPlatform->addChild(m_particleSystems[i],GAME_LAYER_1);
 	}
+	m_particleSystems[PS_SMOKE]->SetMeanDistance(50);
+	m_particleSystems[PS_WATER]->setGlobalZOrder(GAME_LAYER_2);
 
 	m_pCharacter = Character::createCharacter();
 	m_pPlatform->addChild(m_pCharacter);
@@ -301,10 +302,8 @@ void GameScene::initGameObject()
 	this->addChild(m_pHomeScene, GAME_LAYER_3);
 	m_pHomeScene->SetCallback(this);
 	m_pHomeScene->Show();
+	m_pHomeScene->SetBestScore(m_scoreManager.GetHighScore());
 	_eventDispatcher->pauseEventListenersForTarget(this);
-
-	m_score = 0;
-	m_perfectCount = 0;
 
 	m_pOnScreenInfoDisplay = OnScreenInfoDisplay::create();
 	this->addChild(m_pOnScreenInfoDisplay, GAME_LAYER_3);
@@ -313,6 +312,7 @@ void GameScene::initGameObject()
 
 void GameScene::onGameover()
 {
+	m_scoreManager.SaveData();
 	Director::getInstance()->popScene();
 	CCLOG("GAME OVER");
 	Director::getInstance()->pushScene(GameScene::createScene());

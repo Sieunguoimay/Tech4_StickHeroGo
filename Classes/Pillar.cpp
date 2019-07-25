@@ -1,4 +1,6 @@
 #include "Pillar.h"
+#include"utils/Definitions.h"
+
 
 Pillar * Pillar::createPillar(GameLayer*layer, bool hasNoRect)
 {
@@ -24,7 +26,7 @@ void Pillar::initPillar(GameLayer*layer, const Vec2&pos, float scaleX, bool hasN
 	layer->addChild(m_pStick);
 
 	this->setPosition(pos);
-
+	
 	m_width1 = 10;
 	m_width2 = 20;
 	if(!hasNoRect){
@@ -39,21 +41,25 @@ void Pillar::initPillar(GameLayer*layer, const Vec2&pos, float scaleX, bool hasN
 	Sprite* flag = nullptr;
 	if (flagNumber>0&&flagNumber%10==0) {
 		flag = Sprite::create("flag.png");
-		flag->setPosition(Vec2(GetWidth() / 2 - 5.0f, GetHeight()) + flag->getContentSize() / 2);
+		flag->setPosition(Vec2(_contentSize.width / 2, _contentSize.height) + Vec2((flag->getContentSize().width-m_width1-7) / scaleX/ 2, flag->getContentSize().height / 2));
 		this->addChild(flag);
+		auto* label = Label::createWithSystemFont(std::to_string(flagNumber), GAME_TEXT_FONT,15);
+		flag->addChild(label);
+		label->setPosition(-Vec2(49, 44)+flag->getContentSize());
 	}
 
 	this->setScaleX(scaleX);
 	if(m_rect!=nullptr) m_rect->setScaleX(1.0f / _scaleX);
-	if(flag!=nullptr) flag->setScaleX(1.0f / _scaleX);
-
+	if (flag != nullptr) {
+		flag->setScaleX(1.0f / _scaleX);
+	}
+	m_pStick->setPosition(this->GetTopRightPoint()-Vec2(5.0f,0.0f));
 	CCLOG("Pillar created %d",this->getChildrenCount());
 }
 
 void Pillar::setPosition(const Vec2 & pos)
 {
 	GameSprite::setPosition(pos);
-	m_pStick->setPosition(this->GetTopRightPoint());
 }
 
 

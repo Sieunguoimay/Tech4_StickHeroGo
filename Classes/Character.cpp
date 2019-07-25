@@ -29,9 +29,10 @@ void Character::initCharacter()
 void Character::update(float deltaTime) {
 	if ((m_state == CS_FALL)&&_position.x>= m_fallPoint) {
 		m_state = CS_FALL_START;
-		this->stopAction(m_moveAction);
+		this->stopAllActions();
+		CCLOG("Player: Hey fall action");
 		this->runAction(Sequence::create(
-			MoveBy::create(0.5f, Vec2(0.0f, -_position.y)),
+			EaseOut::create(MoveBy::create(0.5f, Vec2(0.0f, -_position.y)),0.3f),
 			CallFunc::create([this]() {
 				if (m_state == CS_FALLING) m_state = CS_DIED;
 			})

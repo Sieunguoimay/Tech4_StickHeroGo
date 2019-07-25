@@ -24,18 +24,26 @@ bool Platform::init()
 	
 	auto pillar = Pillar::createPillar(this,true);
 	this->addChild(pillar);
-	pillar->initPillar(this, Vec2(m_visibleSize.width / 4 + m_visibleSize.width / 4, pillar->getContentSize().height / 2)
+	pillar->initPillar(this, 
+		Vec2(m_visibleSize.width / 2, pillar->getContentSize().height / 2)
 	,1.0f,true,0);
 	m_pillars.push_back(pillar);
 
 	auto pillar2 = Pillar::createPillar(this);
 	this->addChild(pillar2);
-	pillar2->initPillar(this,Vec2(m_visibleSize.width / 4 + m_visibleSize.width / 4*3, pillar2->getContentSize().height / 2)
+	pillar2->initPillar(this,
+		Vec2(Utils::map(CCRANDOM_0_1(), 0.0f, 1.0f, 0.1f, 0.5f) *m_visibleSize.width
+			+ m_visibleSize.width / 2
+			+ pillar->GetWidth()/2+pillar2->GetWidth()/2
+		, pillar2->getContentSize().height / 2)
 	,1.0f,false,1);
 	m_pillars.push_back(pillar2);
 
 	m_nextPillarIndex = 1;
 	m_moveFlag = false;
+
+	m_pillarCountSoFar = 1;
+
 	CCLOG("Platform created %d %f %f",this->getChildrenCount(),this->getAnchorPointInPoints().x, this->getAnchorPointInPoints().y);
 	return true;
 }
@@ -55,18 +63,18 @@ void Platform::update(float deltaTime)
 
 	if (m_pillars.back()->ReadyForSpawning()) {
 
-
-		
-
 		auto pillar = Pillar::createPillar(this);
 		this->addChild(pillar);
 
-		float r_pos = Utils::map(CCRANDOM_0_1(), 0.0f, 1.0f, 0.0f, 1.0f);
+
+		float posVar = Utils::map(m_pillarCountSoFar, 0, 100, 0.5f, 1.2f);
+		float r_pos = Utils::map(CCRANDOM_0_1(), 0.0f, 1.0f, posVar/5.0f, posVar);
 		float r_size = Utils::map(CCRANDOM_0_1(), 0.0f, 1.0f, 0.4f, 1.5f);
 
 		float deltaOffScreenOfTheLastPillar = std::max(
 			m_pillars.back()->getPosition().x + m_pillars.back()->GetWidth() / 2
 			+ _position.x - m_visibleSize.width, 0.0f);
+
 		Vec2 pos(
 			-_position.x + m_visibleSize.width +
 			deltaOffScreenOfTheLastPillar +
@@ -75,10 +83,10 @@ void Platform::update(float deltaTime)
 			pillar->getContentSize().height / 2);
 
 
-		pillar->initPillar(this, pos, r_size,false,10);
+		pillar->initPillar(this, pos, r_size,false, m_pillarCountSoFar);
+
 		m_pillars.push_back(pillar);
-
-
+		m_pillarCountSoFar++;
 
 		resetPosition();
 	}

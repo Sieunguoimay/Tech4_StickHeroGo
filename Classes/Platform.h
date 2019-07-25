@@ -14,6 +14,7 @@ public:
 class Platform:public GameLayer {
 	CREATE_FUNC(Platform);
 	std::vector<Pillar*>m_pillars;
+	int m_pillarCountSoFar;
 	int m_nextPillarIndex;
 	bool m_moveFlag;
 

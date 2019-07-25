@@ -9,6 +9,7 @@
 #include"GameParticleSystem.h"
 #include"OnScreenInfoDisplay.h"
 #include"HomeScene.h"
+#include"ScoreManager.h"
 class GameScene: public GameLayer, public HomeSceneCallback{
 	CREATE_FUNC(GameScene);
 	
@@ -43,9 +44,7 @@ class GameScene: public GameLayer, public HomeSceneCallback{
 	Character*m_pCharacter;
 	Background*m_pBackground;
 	Clouds*m_pClouds;
-
-	int m_score;
-	int m_perfectCount;
+	ScoreManager m_scoreManager;
 public:
 	
 	static Scene* createScene();

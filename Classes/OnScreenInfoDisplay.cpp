@@ -101,7 +101,7 @@ bool OnScreenInfoDisplay::init()
 
 	m_pStarParticleSystem = GameParticleSystem::createParticleSystemByType(PS_STARS);
 	m_pStarParticleSystem->SetSize(20.0f).SetScaleVar(1.8f).SetMeanDistance(70.0f);
-	this->addChild(m_pStarParticleSystem);
+	this->addChild(m_pStarParticleSystem,GAME_LAYER_NEG_1);
 
 
 	CCLOG("OnScreenInfoDisplay created");
@@ -118,5 +118,10 @@ void OnScreenInfoDisplay::ShowRewardForEachPillar(int reward, int perfectCount, 
 	m_pStarParticleSystem->Emit(0.2f, m_rewards[ST_PERFECT]->getPosition());
 	if(reward<ST_TOTAL_NUM) m_rewards[reward]->Show(perfectCount,gainScore);
 
+
+}
+
+void OnScreenInfoDisplay::SetHighScore(int highScore)
+{
 
 }

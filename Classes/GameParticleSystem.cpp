@@ -19,7 +19,6 @@ GameParticleSystem * GameParticleSystem::createParticleSystemByType(int type)
 		temp = createParticleSystem("particle_texture_water.png");
 		break;
 	}
-	temp->setGlobalZOrder(GAME_LAYER_2);
 	return temp;
 }
 

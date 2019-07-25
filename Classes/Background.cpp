@@ -24,28 +24,29 @@ bool Background::initBackground(Layer*pZoomingLayer, Platform*pPlatform)
 	scheduleUpdate();
 	_position += m_visibleSize / 2;
 	
-	this->setGlobalZOrder(GAME_LAYER_NEG_1);
 	
 	m_pSpriteGrass = Sprite::create("background_grass.png");
 	m_pSpriteGrass->setPosition(m_visibleSize.width / 2, m_pSpriteGrass->getContentSize().height/2);
-	m_pSpriteGrass->setGlobalZOrder(GAME_LAYER_NEG_1);
 	this->addChild(m_pSpriteGrass);
 
 	m_pWave3 = Wave::createWave("wave3.png",80.0f,0.4f,0.6f);
 	pZoomingLayer->addChild(m_pWave3);
 	pPlatform->RegisterMoveAlongCallback(m_pWave3);
-	m_pWave3->setGlobalZOrder(GAME_LAYER_0);
 
 	m_pWave2 = Wave::createWave("wave2.png",90.0f,0.5f,0.8f);
 	pZoomingLayer->addChild(m_pWave2);
 	pPlatform->RegisterMoveAlongCallback(m_pWave2);
-	m_pWave2->setGlobalZOrder(GAME_LAYER_0);
 
 	
 	m_pWave1 = Wave::createWave("wave1.png",100.0f,0.6f,1.0f);
 	pZoomingLayer->addChild(m_pWave1);
 	pPlatform->RegisterMoveAlongCallback(m_pWave1);
 	m_pWave1->setGlobalZOrder(GAME_LAYER_2);
+
+
+	m_pMountain = RandFloatingOnLineSprites::Create(100.0f, "mountain1.png");
+	this->addChild(m_pMountain);
+	pPlatform->RegisterMoveAlongCallback(m_pMountain);
 
 	CCLOG("Created background %d",this->getChildrenCount());
 	return true;
@@ -54,7 +55,6 @@ bool Background::initBackground(Layer*pZoomingLayer, Platform*pPlatform)
 
 void Background::update(float deltaTime)
 {
-
 }
 
 void Background::moveAlongCamera(float movingTime, const Vec2& distance)

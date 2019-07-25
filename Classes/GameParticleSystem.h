@@ -46,7 +46,7 @@ public:
 	inline GameParticleSystem&SetMeanTime(float time) { m_meanTime = time; return *this; }
 	inline GameParticleSystem&SetMeanDistance(float distance) { m_meanDistance = distance; return *this; }
 	inline GameParticleSystem&SetDistanceVar(float distance) { m_distanceVar = distance; return *this;}
-	inline GameParticleSystem&SetColor(byte r, byte b, byte g) { m_colorOverlay.r = r; m_colorOverlay.b = b; m_colorOverlay.g = g; return *this;}
+	inline GameParticleSystem&SetColor(byte r, byte g, byte b) { m_colorOverlay.r = r; m_colorOverlay.b = b; m_colorOverlay.g = g; return *this;}
 	inline GameParticleSystem&SetAngleDirStart(float angle) { m_angleDirStart = angle; return *this;}
 	inline GameParticleSystem&SetAngleDirEnd(float angle) { m_angleDirEnd = angle; return *this; }
 	inline GameParticleSystem& SetSize(float size) { m_size = size; return *this; }

@@ -23,5 +23,5 @@ public:
 
 	void OnPlayButtonClicked();
 
-
+	void SetBestScore(int score);
 };
