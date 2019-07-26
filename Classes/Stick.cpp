@@ -24,7 +24,7 @@ bool Stick::init()
 
 Stick::~Stick()
 {
-	CCLOG("Stick deleted");
+	CCLOG("Stick deleted %f %f", _position.x, _position.y);
 }
 
 void Stick::update(float deltaTime)
@@ -49,4 +49,3 @@ void Stick::update(float deltaTime)
 		CCLOG("DONE");
 	}
 }
-

@@ -51,9 +51,9 @@ void Wave::UpdatePosition(const Vec2 & pos)
 	this->setPosition(pos*m_movingRatio);
 
 	auto leftMostSprite = *m_pSprites.begin();
-	auto topRight = this->convertToWorldSpace(leftMostSprite->getPosition() + leftMostSprite->GetSize()/2);
-	if (topRight.x < 0) {
-		leftMostSprite->setPosition(m_pSprites.back()->getPosition() + Vec2(m_pSprites.back()->GetWidth(), 0.0f));
+	auto topRight = this->convertToWorldSpace(leftMostSprite->getPosition() );
+	if (topRight.x + leftMostSprite->GetWidth()/2 < 0) {
+		leftMostSprite->setPosition(m_pSprites.back()->getPosition().x + m_pSprites.back()->GetWidth(), m_pSprites.back()->getPosition().y);
 		m_pSprites.erase(m_pSprites.begin());
 		m_pSprites.push_back(leftMostSprite);
 	}
@@ -71,7 +71,7 @@ void Wave::UpdatePosition(const Vec2 & pos)
 void Wave::ResetPosition()
 {
 	for(auto&sprite:m_pSprites)
-		sprite->setPosition(sprite->getPosition() + Vec2(_position.x,0.0f));
+		sprite->setPosition(sprite->getPosition().x + _position.x,sprite->getPosition().y);
 
 	this->setPosition(0.0f, _position.y);
 }

@@ -21,7 +21,6 @@ bool Platform::init()
 	if (!Layer::init())return false;
 	this->scheduleUpdate();
 	//create children here..
-	
 	auto pillar = Pillar::createPillar(this,true);
 	this->addChild(pillar);
 	pillar->initPillar(this, 
@@ -148,7 +147,7 @@ void Platform::FirstMovementOnGameStart()
 void Platform::resetPosition()
 {
 	CCLOG("Pos %f", _position.x);
-	if (_position.x < -2000) {
+	if (_position.x < -MAX_PLATFORM_RESET_DISTANCE) {
 		for (auto&child : _children)
 			child->setPosition(child->getPosition()+ Vec2(_position.x,0));
 		this->setPosition(0.0f, _position.y);

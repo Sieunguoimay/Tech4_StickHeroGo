@@ -67,8 +67,6 @@ void GameScene::update(float deltaTime)
 			nextPillar->RemoveRect();
 			
 
-			
-
 			int gainScore = pow(2, score);
 
 			if (score == 4) m_scoreManager.IncPerfectCount();
@@ -86,12 +84,14 @@ void GameScene::update(float deltaTime)
 			auto ps_pos = Vec2(pillar->GetStick()->getPosition().x + pillar->GetStick()->GetLength(), pillar->GetTopRightPoint().y);
 			m_particleSystems[PS_SMOKE]->SetAngleDirEnd(180.0f).Emit(0.2f, ps_pos);
 			m_particleSystems[PS_STARS]->SetAngleDirEnd(180.0f).SetSize(15).SetColor(235, 159, 159).Emit(0.1f, ps_pos);
+
+
+			CCLOG("stick position %f %f",pillar->GetStick()->getPosition().x,pillar->GetStick()->getPosition().y);
 		}
 
 		m_pCharacter->MoveToTarget(
 			nextPillar->GetTopRightPoint().x - m_pCharacter->getContentSize().width / 2 - m_pCharacter->getPosition().x -5,
 			(score>0?-1.0f: pillar->GetTopRightPoint().x + stickLength - m_pCharacter->getPosition().x));
-
 	}
 	if (m_pCharacter->GetState() == CharacterState::CS_FALL_START) {
 		m_pPlatform->StopMoving();
@@ -138,7 +138,9 @@ void GameScene::setupEventHandler()
 
 bool GameScene::onTouchBegan(cocos2d::Touch * touch, cocos2d::Event * ev)
 {
-	m_particleSystems[PS_SMOKE]->Emit(0.1f, touch->getLocation());
+	auto pillar = m_pPlatform->GetCurrentPillar();
+	if (pillar != nullptr && pillar->GetStick()->GetState() == START)
+		pillar->GetStick()->SetState(ENLONGATING);
 	return true;
 }
 
@@ -148,6 +150,9 @@ void GameScene::onTouchMoved(cocos2d::Touch * touch, cocos2d::Event * ev)
 
 void GameScene::onTouchEnded(cocos2d::Touch * touch, cocos2d::Event * ev)
 {
+	auto pillar = m_pPlatform->GetCurrentPillar();
+	if (pillar != nullptr && pillar->GetStick()->GetState() == ENLONGATING)
+		pillar->GetStick()->SetState(ENLONGATED);
 }
 
 
@@ -265,7 +270,7 @@ void GameScene::initGameObject()
 	m_pZoomingLayer->setAnchorPoint(Vec2(0.5f, 0.0f));
 	m_pZoomingLayer2->setAnchorPoint(Vec2(0.5f, 0.0f));
 	this->addChild(m_pZoomingLayer,GAME_LAYER_NEG_1);
-	this->addChild(m_pZoomingLayer2, GAME_LAYER_0);
+	this->addChild(m_pZoomingLayer2, GAME_LAYER_NEG_1);
 	
 
 	m_pPlatform = Platform::createPlatform();

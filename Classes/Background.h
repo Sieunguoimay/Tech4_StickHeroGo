@@ -17,6 +17,7 @@ class Background:public GameSprite{
 	std::vector<GameSprite*>m_mountains;
 
 	RandFloatingOnLineSprites* m_pMountain;
+	RandFloatingOnLineSprites* m_pTree;
 
 public:
 	static Background*createBackground(Layer*pZoomingLayer,Platform*pPlatform);

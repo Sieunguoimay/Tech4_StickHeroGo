@@ -45,12 +45,19 @@ bool Background::initBackground(Layer*pZoomingLayer, Platform*pPlatform)
 
 
 	m_pMountain = RandFloatingOnLineSprites::create();
-	m_pMountain->AddSpriteBatchNode("mountain1.png", this);
-	m_pMountain->AddSpriteBatchNode("mountain2.png",this);
-	m_pMountain->AddSpriteBatchNode("mountain3.png",this);
+	m_pMountain->AddSpriteBatchNode("mountain1.png");
+	m_pMountain->AddSpriteBatchNode("mountain2.png");
+	m_pMountain->AddSpriteBatchNode("mountain3.png");
 	m_pMountain->initFloatingOnLineSprites(m_pSpriteGrass->getContentSize().height);
 	this->addChild(m_pMountain);
 	pPlatform->RegisterMoveAlongCallback(m_pMountain);
+
+
+	m_pTree = RandFloatingOnLineSprites::create();
+	m_pTree->AddSpriteBatchNode("tree.png");
+	m_pTree->initFloatingOnLineSprites(m_pSpriteGrass->getContentSize().height-5);
+	this->addChild(m_pTree);
+	pPlatform->RegisterMoveAlongCallback(m_pTree);
 
 	CCLOG("Created background %d",this->getChildrenCount());
 	return true;

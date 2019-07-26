@@ -60,7 +60,7 @@ GameParticleSystem::~GameParticleSystem()
 
 void GameParticleSystem::update(float deltaTime)
 {
-	if (m_state = PSS_EMIT) {
+	if (m_state == PSS_EMIT) {
 		int n = std::max((int)(deltaTime* m_emittingRate),1);
 
 		if (m_emittingDuration > 0) {

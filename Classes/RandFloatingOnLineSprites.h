@@ -12,7 +12,7 @@ class RandFloatingOnLineSprites :public GameLayer, public MoveAlongCallback {
 public:
 	CREATE_FUNC(RandFloatingOnLineSprites);
 	//static RandFloatingOnLineSprites* Create(float y, const char* file_name);
-	void AddSpriteBatchNode(const char*file_name, Node*parent);
+	void AddSpriteBatchNode(const char*file_name);
 	void initFloatingOnLineSprites(float y);
 	~RandFloatingOnLineSprites();
 

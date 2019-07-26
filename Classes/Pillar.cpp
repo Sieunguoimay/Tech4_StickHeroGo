@@ -53,8 +53,7 @@ void Pillar::initPillar(GameLayer*layer, const Vec2&pos, float scaleX, bool hasN
 	if (flag != nullptr) {
 		flag->setScaleX(1.0f / _scaleX);
 	}
-	m_pStick->setPosition(this->GetTopRightPoint()-Vec2(5.0f,0.0f));
-	CCLOG("Pillar created %d",this->getChildrenCount());
+	m_pStick->setPosition(this->GetTopRightPoint().x - 5.0f,this->GetTopRightPoint().y);
 }
 
 void Pillar::setPosition(const Vec2 & pos)
