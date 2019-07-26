@@ -2,26 +2,13 @@
 #include"utils/Utils.h"
 
 
-
-RandFloatingOnLineSprites* RandFloatingOnLineSprites::Create(float y, const char* file_name)
-{
-	auto s = new RandFloatingOnLineSprites();
-	if (s && s->initWithFile(file_name)) {
-		s->initFloatingOnLineSprites(y);
-		s->autorelease();
-		return s;
-	}
-	CC_SAFE_DELETE(s);
-	return nullptr;
-}
-
 void RandFloatingOnLineSprites::initFloatingOnLineSprites(float y)
 {
 	m_y = y;
 	m_visibleSize = Director::getInstance()->getVisibleSize();
 	m_movingRatio = 0.4f;
 
-	auto sprite = GameSprite::createGameSpriteWithTexture(this->getTexture());
+	auto sprite = GameSprite::createGameSpriteWithTexture(m_spriteBatchNodes[0]->getTexture());
 	sprite->setPosition(Vec2(0,y)+ sprite->getContentSize()/2);
 	this->addChild(sprite);
 	m_sprites.push(sprite);
@@ -34,12 +21,25 @@ RandFloatingOnLineSprites::~RandFloatingOnLineSprites()
 	CCLOG("RandFloatingOnLineSprites created");
 }
 
+void RandFloatingOnLineSprites::AddSpriteBatchNode(const char * file_name, Node*parent)
+{
+	m_spriteBatchNodes.push_back(SpriteBatchNode::create(file_name));
+	this->addChild(m_spriteBatchNodes.back());
+}
+
 
 void RandFloatingOnLineSprites::putSprite()
 {
 	if (m_sprites.size() == 0)return;
-	float r_x = Utils::map(CCRANDOM_0_1(), 0.0f, 1.0f, m_sprites.back()->GetWidth() / 4, m_sprites.back()->GetWidth());
-	auto sprite = GameSprite::createGameSpriteWithTexture(this->getTexture());
+	
+	float r_x = Utils::map(CCRANDOM_0_1(), 0.0f, 1.0f, 0.0f, m_sprites.back()->GetWidth());
+	
+	int r_index = 0;
+	if (m_spriteBatchNodes.size() > 1)
+		r_index = (int)Utils::map(CCRANDOM_0_1(), 0.0f, 1.0f, 0.0f, (float)m_spriteBatchNodes.size());
+	
+
+	auto sprite = GameSprite::createGameSpriteWithTexture(m_spriteBatchNodes[r_index]->getTexture());
 	sprite->setPosition(Vec2(m_sprites.back()->getPosition().x + r_x, m_y)+sprite->getContentSize() / 2);
 	m_sprites.push(sprite);
 	this->addChild(sprite);

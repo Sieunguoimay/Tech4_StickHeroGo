@@ -44,7 +44,11 @@ bool Background::initBackground(Layer*pZoomingLayer, Platform*pPlatform)
 	m_pWave1->setGlobalZOrder(GAME_LAYER_2);
 
 
-	m_pMountain = RandFloatingOnLineSprites::Create(100.0f, "mountain1.png");
+	m_pMountain = RandFloatingOnLineSprites::create();
+	m_pMountain->AddSpriteBatchNode("mountain1.png", this);
+	m_pMountain->AddSpriteBatchNode("mountain2.png",this);
+	m_pMountain->AddSpriteBatchNode("mountain3.png",this);
+	m_pMountain->initFloatingOnLineSprites(m_pSpriteGrass->getContentSize().height);
 	this->addChild(m_pMountain);
 	pPlatform->RegisterMoveAlongCallback(m_pMountain);
 
