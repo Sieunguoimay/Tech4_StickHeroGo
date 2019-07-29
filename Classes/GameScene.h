@@ -11,6 +11,7 @@
 #include"HomeScene.h"
 #include"ScoreManager.h"
 #include"Followers.h"
+#include"ShowScoreScene.h"
 class GameScene: public GameLayer, public HomeSceneCallback{
 	CREATE_FUNC(GameScene);
 	
@@ -23,7 +24,7 @@ class GameScene: public GameLayer, public HomeSceneCallback{
 	void onKeyPressed(EventKeyboard::KeyCode keyCode, Event*event)override;
 	void onKeyReleased(EventKeyboard::KeyCode keyCode, Event*event)override;
 
-	void OnPlayButtonClicked()override;
+	void OnPlayButtonClicked(int callerId)override;
 	void NextStep(int score);
 
 	void setupMenu();
@@ -32,12 +33,14 @@ class GameScene: public GameLayer, public HomeSceneCallback{
 
 	void initGameObject();
 	void onGameover();
+	void resetGame();
 
 	Layer*m_pZoomingLayer;//scale variance factor greater
 	Layer*m_pZoomingLayer2;//scale variance factor smaller
 
 	OnScreenInfoDisplay*m_pOnScreenInfoDisplay;
 	HomeScene*m_pHomeScene;
+	ShowScoreScene* m_pShowScoreScene;
 	EventListenerTouchOneByOne*m_touchListener;
 
 	GameParticleSystem*m_particleSystems[PS_TOTAL_NUM];
@@ -47,6 +50,8 @@ class GameScene: public GameLayer, public HomeSceneCallback{
 	Clouds*m_pClouds;
 	ScoreManager m_scoreManager;
 	Followers*m_followers;
+
+	int m_themeIndex;
 public:
 	
 	static Scene* createScene();

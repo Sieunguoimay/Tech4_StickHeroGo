@@ -22,8 +22,10 @@ public:
 	void Show(int perfectCount,int gainScore);
 };
 
+
 class OnScreenInfoDisplay :public GameLayer{
-	Label*m_pTextScore;
+	Label* m_pTextScore;
+
 	Label*m_pTextHistoryHigh;
 
 	Reward* m_rewards[ST_TOTAL_NUM];

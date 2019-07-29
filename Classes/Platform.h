@@ -21,11 +21,13 @@ class Platform:public GameLayer {
 	int m_pillarCountSoFar;
 	int m_nextPillarIndex;
 	bool m_moveFlag;
+	int m_state;
+	float m_futurePosX;
 
 	void resetPosition();
 	std::vector<MoveAlongCallback*>m_callbacks;
 	Sequence*m_pMoveAction;
-	int m_state;
+	float calculateDistanceToNext(int pillarIndex);
 public:
 	static Platform*createPlatform();
 	~Platform()override;
@@ -34,6 +36,7 @@ public:
 
 	//public usage
 	float MoveAndCalculateScale();
+	inline float GetFuturePosX() const {return m_futurePosX;}
 	inline Pillar*GetCurrentPillar() const { if (m_nextPillarIndex >0)return m_pillars[m_nextPillarIndex - 1]; return nullptr; }
 	inline Pillar* GetNextPillar() const { if (m_nextPillarIndex >= 0)return m_pillars[m_nextPillarIndex]; return nullptr; }
 	inline Pillar*GetFirstPillar() const { return m_pillars[0]; }
@@ -41,6 +44,8 @@ public:
 	inline void RegisterMoveAlongCallback(MoveAlongCallback*callback) { m_callbacks.push_back(callback); }
 	inline void StopMoving(){this->stopAction(m_pMoveAction); }
 	inline int GetState()const { return m_state; }
+	inline int GetPillarCount() const { return m_pillarCountSoFar; }
 	void FirstMovementOnGameStart();
+	void AddRulerToCurrentPilar();
 };
 

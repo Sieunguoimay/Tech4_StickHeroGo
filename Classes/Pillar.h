@@ -6,7 +6,7 @@
 class Pillar: public GameSprite{
 	bool m_spawned;
 	Stick*m_pStick;
-
+	DrawNode* m_ruler;
 	DrawNode*m_rect;
 	float m_width1;
 	float m_width2;
@@ -18,7 +18,8 @@ public:
 	void initPillar(GameLayer*layer,const Vec2&pos,float scaleX, bool hasNoRect, int flagNumber);
 
 	void setPosition(const Vec2&pos)override;
-
+	void AddRuler(float length);
+	void RemoveRuler();
 	//public usage
 	bool HasDone();
 	bool ReadyForSpawning();

@@ -8,13 +8,13 @@ struct Follower :public GameSprite{
 };
 
 class Followers {
-	Node*m_pParent;
+	class Platform*m_pParent;
 	Character*m_pLeader;
 
 	std::vector<Follower*>m_animals;
 	class GameParticleSystem*m_particleSystem;
 public:
-	Followers(Node*pParent, Character*pLeader);
+	Followers(Platform*pParent, Character*pLeader);
 	~Followers();
 	
 	Follower* SpawnFollower();

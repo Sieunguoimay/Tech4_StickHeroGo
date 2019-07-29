@@ -68,8 +68,12 @@ void Clouds::generateClouds(const Vec2&offset)
 	Vec2 r_pos(
 		Utils::map(CCRANDOM_0_1(), 0.0f, 1.0f, 0.0f, 1.0f)*m_visibleSize.width,
 		Utils::map(CCRANDOM_0_1(), 0.0f, 1.0f, 0.5f, 1.0f)*m_visibleSize.height);
+
+	float r_scale = Utils::map(CCRANDOM_0_1(), 0.0f, 1.0f, 0.3f, 1.2f);
+
 	auto cloud = GameSprite::createGameSpriteWithFrameName(path.c_str());
 	cloud->setPosition(offset+r_pos);
+	cloud->setScale(r_scale);
 	this->addChild(cloud);
 	m_clouds.push_back(cloud);
 }

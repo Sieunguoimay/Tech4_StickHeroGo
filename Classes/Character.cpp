@@ -20,9 +20,8 @@ Character * Character::createCharacter()
 
 void Character::initCharacter()
 {
-	this->setGlobalZOrder(GAME_LAYER_1);
 	this->scheduleUpdate();
-	m_state = CS_STAND;
+	m_state = CS_STANDING;
 
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("main_character_run.plist");
 	this->addChild(SpriteBatchNode::create("main_character_run.png"));

@@ -82,7 +82,7 @@ bool OnScreenInfoDisplay::init()
 
 	m_pTextScore = Label::createWithSystemFont("0", "Calibri", 30.0f);
 	this->addChild(m_pTextScore);
-	m_pTextScore->setPosition(m_visibleSize.width / 2, m_visibleSize.height * 0.8f);
+	m_pTextScore->setPosition(Vec2(m_visibleSize.width / 2, m_visibleSize.height * 0.8f));
 
 	m_pTextHistoryHigh = Label::createWithSystemFont("History high", "Calibri", 15.0f);
 	this->addChild(m_pTextHistoryHigh);
@@ -114,6 +114,7 @@ bool OnScreenInfoDisplay::init()
 
 OnScreenInfoDisplay::~OnScreenInfoDisplay()
 {
+	delete m_pTextScore;
 	CCLOG("OnScreenInfoDisplay deleted");
 }
 

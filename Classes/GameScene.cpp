@@ -166,16 +166,22 @@ void GameScene::menuGameOverCallback(cocos2d::Ref * pSender)
 
 
 
-void GameScene::OnPlayButtonClicked()
+void GameScene::OnPlayButtonClicked(int callerId)
 {
-	m_pHomeScene->Hide();
+	if (callerId == CI_HOME_SCENE) {
+		m_pHomeScene->Hide();
 
-	CCLOG("Start game from here...");
+		CCLOG("Start game from here...");
 
-	_eventDispatcher->resumeEventListenersForTarget(this);
-	m_pOnScreenInfoDisplay->setVisible(true);
-	m_pPlatform->FirstMovementOnGameStart();
-	m_pCharacter->MoveToTarget(m_pPlatform->GetFirstPillar()->GetTopRightPoint().x - m_pCharacter->getContentSize().width / 2 - m_pCharacter->getPosition().x - 5, 0.0f);
+		_eventDispatcher->resumeEventListenersForTarget(this);
+		m_pOnScreenInfoDisplay->setVisible(true);
+		m_pPlatform->FirstMovementOnGameStart();
+		m_pCharacter->MoveToTarget(m_pPlatform->GetFirstPillar()->GetTopRightPoint().x - m_pCharacter->getContentSize().width / 2 - m_pCharacter->getPosition().x - 5, 0.0f);
+	}
+	else if (callerId == CI_SHOW_SCORE_SCENE) {
+		resetGame();
+	}
+	
 }
 
 
@@ -185,63 +191,68 @@ void GameScene::update(float deltaTime)
 {
 	if (m_pPlatform->GetState() == PFS_SPAWN_PILLAR) {
 		//some conditions here...
-		m_pPlatform->GetLastPillar()->SetFollower(m_followers->SpawnFollower());
+		if(m_pPlatform->GetPillarCount()%2==0)
+			m_pPlatform->GetLastPillar()->SetFollower(m_followers->SpawnFollower());
 
 	}
 
 	auto pillar = m_pPlatform->GetCurrentPillar();
 
-	if (pillar != nullptr
-		&&pillar->GetStick()->GetState() == FELL) {
+	if (pillar != nullptr) {
+		if (pillar->GetStick()->GetState() == FELL) {
 
-		auto nextPillar = m_pPlatform->GetNextPillar();
-		auto pillar = m_pPlatform->GetCurrentPillar();
+			auto nextPillar = m_pPlatform->GetNextPillar();
+			auto pillar = m_pPlatform->GetCurrentPillar();
 
-		float perfectLength = nextPillar->getPosition().x - pillar->GetTopRightPoint().x;
-		float stickLength = pillar->GetStick()->GetLength();
-		float nextPillarHalfWidth = (nextPillar->GetWidth() / 2);
-		float distanceFromCenter = std::min(std::abs(perfectLength - stickLength), nextPillarHalfWidth);
+			float perfectLength = nextPillar->getPosition().x - pillar->GetTopRightPoint().x;
+			float stickLength = pillar->GetStick()->GetLength();
+			float nextPillarHalfWidth = (nextPillar->GetWidth() / 2);
+			float distanceFromCenter = std::min(std::abs(perfectLength - stickLength), nextPillarHalfWidth);
 
-		int score = 0;// Utils::map(distanceFromCenter, 0.0f, nextPillarHalfWidth, MAX_SCORE_FOR_ONE_PILLAR, 0.0f);
-		if (distanceFromCenter <= nextPillar->GetWidth1()) score = 4;
-		else if (distanceFromCenter <= nextPillar->GetWidth2()) score = 3;
-		else if (distanceFromCenter < nextPillarHalfWidth) score = 2;
+			int score = 0;// Utils::map(distanceFromCenter, 0.0f, nextPillarHalfWidth, MAX_SCORE_FOR_ONE_PILLAR, 0.0f);
+			if (distanceFromCenter <= nextPillar->GetWidth1()) score = 4;
+			else if (distanceFromCenter <= nextPillar->GetWidth2()) score = 3;
+			else if (distanceFromCenter < nextPillarHalfWidth) score = 2;
 
 
-		if (score > 0) {
+			if (score > 0) {
 
-			auto ps_pos = Vec2(pillar->GetStick()->getPosition().x + pillar->GetStick()->GetLength(), pillar->GetTopRightPoint().y);
-			m_particleSystems[PS_SMOKE]->SetAngleDirEnd(180.0f).Emit(0.2f, ps_pos);
-			m_particleSystems[PS_STARS]->SetAngleDirEnd(180.0f).SetSize(15).SetColor(235, 159, 159).Emit(0.1f, ps_pos);
+				auto ps_pos = Vec2(pillar->GetStick()->getPosition().x + pillar->GetStick()->GetLength(), pillar->GetTopRightPoint().y);
+				m_particleSystems[PS_SMOKE]->SetAngleDirEnd(180.0f).Emit(0.2f, ps_pos);
+				m_particleSystems[PS_STARS]->SetAngleDirEnd(180.0f).SetSize(15).SetColor(235, 159, 159).Emit(0.1f, ps_pos);
 
-			
-			if (nextPillar->GetFollower() != nullptr) {
-				m_followers->AddFollower(nextPillar->GetFollower(), [this,score]() {
-					NextStep(score);
-				});
-				nextPillar->SetFollower(nullptr);
-			}else
-				NextStep(score);
-		}
-		else {
+				int gainScore = pow(2, score);
+				if (score == 4) m_scoreManager.IncPerfectCount();
+				else m_scoreManager.SetPerfectCount(0);
+				if (m_scoreManager.GetPerfectCount() > 1) gainScore += pow(2, m_scoreManager.GetPerfectCount());
+				m_scoreManager.AddScore(gainScore);
+				m_pOnScreenInfoDisplay->ShowRewardForEachPillar(score - 2, m_scoreManager.GetPerfectCount(), gainScore);
+				m_pOnScreenInfoDisplay->SetScore(m_scoreManager.GetScore());
 
-			m_pCharacter->MoveToTarget(
-				nextPillar->GetTopRightPoint().x - m_pCharacter->getContentSize().width / 2 - m_pCharacter->getPosition().x - 5,
-				(score>0 ? -1.0f : pillar->GetTopRightPoint().x + stickLength - m_pCharacter->getPosition().x));
 
-			nextPillar->RemoveRect();
 
-			auto scale = m_pPlatform->MoveAndCalculateScale();
-			if (scale > 0) {
-				m_pZoomingLayer->runAction(ScaleTo::create(1.0f, scale));
-				m_pZoomingLayer2->runAction(ScaleTo::create(1.0f, Utils::map(scale, 0.0f, 1.0f, 0.75f, 1.0f)));
+
+				if (nextPillar->GetFollower() != nullptr) {
+					m_followers->AddFollower(nextPillar->GetFollower(), [this, score]() {
+						NextStep(score);
+						});
+					nextPillar->SetFollower(nullptr);
+				}
+				else NextStep(score);
 			}
-
+			else NextStep(score);
+		}
+		else if (pillar->GetStick()->GetState() == ENLONGATED) {
+			pillar->RemoveRuler();
 		}
 	}
 	if (m_pCharacter->GetState() == CharacterState::CS_FALL_START) {
 		m_pPlatform->StopMoving();
 		CCLOG("CS_FALL_START");
+	}
+	else if (m_pCharacter->GetState() == CharacterState::CS_STAND) {
+		if(m_pPlatform->GetPillarCount()<7)
+			m_pPlatform->AddRulerToCurrentPilar();
 	}
 	if (m_pCharacter->GetState() == CharacterState::CS_DIED) {
 		m_particleSystems[PS_WATER]
@@ -264,7 +275,7 @@ void GameScene::NextStep(int score)
 
 	m_pCharacter->MoveToTarget(
 		nextPillar->GetTopRightPoint().x - m_pCharacter->getContentSize().width / 2 - m_pCharacter->getPosition().x - 5,
-		(score>0 ? -1.0f : pillar->GetTopRightPoint().x + stickLength - m_pCharacter->getPosition().x));
+		(score > 0 ? -1.0f : pillar->GetTopRightPoint().x + stickLength - m_pCharacter->getPosition().x));
 
 	nextPillar->RemoveRect();
 
@@ -274,22 +285,7 @@ void GameScene::NextStep(int score)
 		m_pZoomingLayer2->runAction(ScaleTo::create(1.0f, Utils::map(scale, 0.0f, 1.0f, 0.75f, 1.0f)));
 	}
 
-	if (score > 0) {
 
-		int gainScore = pow(2, score);
-
-		if (score == 4) m_scoreManager.IncPerfectCount();
-		else m_scoreManager.SetPerfectCount(0);
-
-		if (m_scoreManager.GetPerfectCount()> 1) gainScore += pow(2, m_scoreManager.GetPerfectCount());
-
-		m_scoreManager.AddScore(gainScore);
-
-		m_pOnScreenInfoDisplay->ShowRewardForEachPillar(score - 2, m_scoreManager.GetPerfectCount(), gainScore);
-		m_pOnScreenInfoDisplay->SetScore(m_scoreManager.GetScore());
-
-		CCLOG("stick position %f %f", pillar->GetStick()->getPosition().x, pillar->GetStick()->getPosition().y);
-	}
 }
 
 
@@ -300,10 +296,14 @@ void GameScene::initGameObject()
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("common_sprites.plist");
 	this->addChild(SpriteBatchNode::create("common_sprites.png"));
 
-	int themeIndex = (rand() % 100)>50?1:2;
-	CCLOG("theme%d", themeIndex);
-	SpriteFrameCache::getInstance()->addSpriteFramesWithFile(String::createWithFormat("theme%d.plist", themeIndex)->getCString());
-	this->addChild(SpriteBatchNode::create(String::createWithFormat("theme%d.png", themeIndex)->getCString()));
+	m_themeIndex = (rand() % 100)%3+1;
+
+	SpriteFrameCache::getInstance()->addSpriteFramesWithFile(String::createWithFormat("theme%d.plist", m_themeIndex)->getCString());
+	this->addChild(SpriteBatchNode::create(String::createWithFormat("theme%d.png", m_themeIndex)->getCString()));
+
+
+	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("dog_run.plist");
+	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("dog_stand.plist");
 
 
 	m_pZoomingLayer = Layer::create();
@@ -311,7 +311,7 @@ void GameScene::initGameObject()
 	m_pZoomingLayer->setAnchorPoint(Vec2(0.5f, 0.0f));
 	m_pZoomingLayer2->setAnchorPoint(Vec2(0.5f, 0.0f));
 	this->addChild(m_pZoomingLayer,GAME_LAYER_NEG_1);
-	this->addChild(m_pZoomingLayer2, GAME_LAYER_NEG_1);
+	this->addChild(m_pZoomingLayer2);
 	
 
 	m_pPlatform = Platform::createPlatform();
@@ -362,10 +362,22 @@ void GameScene::initGameObject()
 
 void GameScene::onGameover()
 {
+	m_pShowScoreScene = ShowScoreScene::create();
+	this->addChild(m_pShowScoreScene, GAME_LAYER_3);
+	m_pShowScoreScene->SetCallback(this);
+	m_pShowScoreScene->Show();
+	m_pShowScoreScene->SetBestScore(m_scoreManager.GetHighScore());
+	m_pShowScoreScene->SetScore(m_scoreManager.GetScore());
+	_eventDispatcher->pauseEventListenersForTarget(this);
+
+
+}
+
+void GameScene::resetGame()
+{
 	m_scoreManager.SaveData();
-	Director::getInstance()->popScene();
 	SpriteFrameCache::getInstance()->destroyInstance();
 
 	CCLOG("GAME OVER");
-	Director::getInstance()->pushScene(GameScene::createScene());
+	Director::getInstance()->replaceScene(TransitionFade::create(0.5f,GameScene::createScene(), Color3B(255, 255, 255)));
 }

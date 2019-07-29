@@ -24,5 +24,5 @@ public:
 	void update(float deltaTime)override;
 	void MoveToTarget(float distance,float fallingDistance);
 	inline int GetState()const { return m_state; }
-	inline float GetXTarget()const { return _position.x+m_xTarget; }
+	inline float GetNextDistance()const { return m_xTarget; }
 };

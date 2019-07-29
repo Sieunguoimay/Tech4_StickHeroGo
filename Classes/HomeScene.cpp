@@ -51,7 +51,7 @@ void HomeScene::Hide()
 void HomeScene::OnPlayButtonClicked()
 {
 	if(m_callback!=nullptr)
-		m_callback->OnPlayButtonClicked();
+		m_callback->OnPlayButtonClicked(CI_HOME_SCENE);
 }
 
 void HomeScene::SetBestScore(int score)

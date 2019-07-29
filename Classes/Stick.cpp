@@ -12,8 +12,7 @@ bool Stick::init()
 {
 	if (!DrawNode::init())return false;
 	scheduleUpdate();
-	this->setGlobalZOrder(GAME_LAYER_1);
-	this->drawSolidRect(Vec2(0, 5), Vec2(4, m_maxLength+5), Color4F(1.0f, 1.0f, 0.8f, 1.0f));
+	this->drawSolidRect(Vec2(0, 5), Vec2(5, m_maxLength+5), Color4F(0.4f, 0.2f, 0.2f, 1.0f));
 	this->setScaleY(0.0f);
 	m_state = START;
 

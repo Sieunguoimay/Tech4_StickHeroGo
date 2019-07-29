@@ -7,6 +7,14 @@ Platform::~Platform()
 }
 
 
+//this function must be called when the pillar index is not the last one in container
+float Platform::calculateDistanceToNext(int pillarIndex)
+{
+	float a = m_pillars[pillarIndex]->GetTopRightPoint().x;
+	float b = m_pillars[pillarIndex + 1]->getPosition().x;
+	return b-a;
+}
+
 Platform * Platform::createPlatform()
 {
 	auto platform = Platform::create();
@@ -38,10 +46,11 @@ bool Platform::init()
 	,1.0f,false,1);
 	m_pillars.push_back(pillar2);
 
+
 	m_nextPillarIndex = 1;
 	m_moveFlag = false;
 
-	m_pillarCountSoFar = 1;
+	m_pillarCountSoFar = 2;
 
 	CCLOG("Platform created %d %f %f",this->getChildrenCount(),this->getAnchorPointInPoints().x, this->getAnchorPointInPoints().y);
 	return true;
@@ -129,8 +138,12 @@ float Platform::MoveAndCalculateScale()
 
 	float pillarDistance = std::abs(pillar1Pos.x - pillar2Pos.x) + pillar1Size.width * pillar1ScaleX / 2 + pillar2Size.width * pillar2ScaleX / 2 + pillar2Size.width;
 	float scale = std::min(1.0f, m_visibleSize.width / pillarDistance);
+
+	m_futurePosX = target - pillarDistance/2;
+
 	return scale;
 }
+
 
 void Platform::FirstMovementOnGameStart()
 {
@@ -146,6 +159,11 @@ void Platform::FirstMovementOnGameStart()
 	float distance = target - (-this->_position.x) - m_visibleSize.width / 2;
 
 	this->runAction(MoveBy::create(0.5f, Vec2(-distance,0.0f)));
+}
+
+void Platform::AddRulerToCurrentPilar()
+{
+	m_pillars[m_nextPillarIndex-1]->AddRuler(calculateDistanceToNext(m_nextPillarIndex - 1));
 }
 
 
