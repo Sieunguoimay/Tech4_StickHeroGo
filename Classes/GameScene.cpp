@@ -4,6 +4,7 @@
 #include"utils/Definitions.h"
 #include"utils/Utils.h"
 #include"GameParticleSystem.h"
+#include"SimpleAudioEngine.h"
 Scene * GameScene::createScene()
 {
 	auto gameScene = Scene::create();
@@ -24,7 +25,7 @@ bool GameScene::init()
 	scheduleUpdate();
 	setupEventHandler();
 
-
+	initAudio();
 	initGameObject();
 
 
@@ -59,8 +60,8 @@ void GameScene::setupEventHandler()
 bool GameScene::onTouchBegan(cocos2d::Touch * touch, cocos2d::Event * ev)
 {
 	auto pillar = m_pPlatform->GetCurrentPillar();
-	if (pillar != nullptr && pillar->GetStick()->GetState() == START)
-		pillar->GetStick()->SetState(ENLONGATING);
+	if (pillar != nullptr )
+		pillar->GetStick()->Enlongate();
 	return true;
 }
 
@@ -185,6 +186,17 @@ void GameScene::OnPlayButtonClicked(int callerId)
 }
 
 
+
+void GameScene::initAudio()
+{
+	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("audio/reward_good.mp3");
+	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("audio/reward_great.mp3");
+	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("audio/reward_perfect1.mp3");
+	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("audio/reward_perfect2.mp3");
+	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("audio/reward_perfect3.mp3");
+	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("audio/stick_enlongating.mp3");
+	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("audio/fall_into_water.mp3");
+}
 
 
 void GameScene::update(float deltaTime)

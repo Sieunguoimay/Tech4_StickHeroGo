@@ -2,7 +2,6 @@
 #include"GameLayer.h"
 #include"GameSprite.h"
 #include"GameParticleSystem.h"
-#include <cocos-ext.h>
 enum RewardType {
 	ST_GOOD,
 	ST_GREAT,
@@ -15,9 +14,10 @@ class Reward :public GameLayer{
 	Sprite* m_bg2;
 	Label* m_label;
 	Label* m_labelPerfectScore;
+	std::string m_soundPath;
 public:
 	CREATE_FUNC(Reward);
-	void initReward(const char*name, const char*title);
+	void initReward(const char*name, const char*title, const char*sound_path);
 
 	void Show(int perfectCount,int gainScore);
 };

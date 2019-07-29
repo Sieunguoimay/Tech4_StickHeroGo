@@ -20,12 +20,14 @@ class Stick:public DrawNode {
 	float m_length;
 	int m_state;
 
+	int m_soundId;
 public:
 	static Stick*createStick();
 	bool init()override;
 	~Stick();
 
 	void update(float deltaTime);
+	void Enlongate();
 	inline void SetState(int state) { if(m_state !=DONE) m_state = state; }
 	inline int GetState() { return m_state; }
 	inline float GetLength() { return m_length; }

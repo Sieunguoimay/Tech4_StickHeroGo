@@ -1,8 +1,10 @@
 #include "OnScreenInfoDisplay.h"
 #include"utils/Definitions.h"
+#include"SimpleAudioEngine.h"
 
 
-void Reward::initReward(const char* name, const char* title) {
+void Reward::initReward(const char* name, const char* title, const char*sound_path) {
+	m_soundPath = sound_path;
 	m_bg1 = Sprite::createWithSpriteFrameName((std::string(name)+".png").c_str());
 	m_bg2 = Sprite::createWithSpriteFrameName((std::string(name) + "_2.png").c_str());
 	m_label = Label::createWithSystemFont(title, "Calibri", 30.0f);
@@ -62,10 +64,17 @@ void Reward::Show(int perfectCount, int gainScore) {
 	CCLOG("perfectCount %d", perfectCount);
 
 	char s[10];
-	if(perfectCount>0)
+
+	if (perfectCount > 0) {
 		sprintf(s, "x%d +%d", perfectCount, gainScore);
-	else
+		CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(
+			String::createWithFormat("audio/reward_perfect%d.mp3",std::min(perfectCount,3))->getCString());
+	}
+	else {
+		CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(m_soundPath.c_str());
 		sprintf(s, "+%d", gainScore);
+	}
+	
 	m_labelPerfectScore->setString(s);
 
 }
@@ -90,16 +99,16 @@ bool OnScreenInfoDisplay::init()
 
 
 	m_rewards[ST_PERFECT] = Reward::create();
-	m_rewards[ST_PERFECT]->initReward("reward_perfect", "PERFECT");
+	m_rewards[ST_PERFECT]->initReward("reward_perfect", "PERFECT","audio/reward_perfect1.mp3");
 	this->addChild(m_rewards[ST_PERFECT]);
 
 
 	m_rewards[ST_GREAT] = Reward::create();
-	m_rewards[ST_GREAT]->initReward("reward_great", "GREAT");
+	m_rewards[ST_GREAT]->initReward("reward_great", "GREAT","audio/reward_great.mp3");
 	this->addChild(m_rewards[ST_GREAT]);
 
 	m_rewards[ST_GOOD] = Reward::create();
-	m_rewards[ST_GOOD]->initReward("reward_good", "GOOD");
+	m_rewards[ST_GOOD]->initReward("reward_good", "GOOD","audio/reward_good.mp3");
 	this->addChild(m_rewards[ST_GOOD]);
 
 

@@ -31,6 +31,7 @@ class GameScene: public GameLayer, public HomeSceneCallback{
 	void menuPauseCallback(Ref*pSender);
 	void menuGameOverCallback(Ref*pSender);
 
+	void initAudio();
 	void initGameObject();
 	void onGameover();
 	void resetGame();

@@ -1,6 +1,7 @@
 #include "Character.h"
 #include"GameParticleSystem.h"
 #include"utils/Definitions.h"
+#include"SimpleAudioEngine.h"
 Character::~Character()
 {
 	CCLOG("Deleted player");
@@ -69,9 +70,9 @@ void Character::update(float deltaTime) {
 		this->runAction(Sequence::create(
 			EaseOut::create(MoveBy::create(0.5f, Vec2(0.0f, -_position.y)), 0.3f),
 			CallFunc::create([this]() {
-			if (m_state == CS_FALLING) m_state = CS_DIED;
-		})
-			, nullptr));
+				if (m_state == CS_FALLING) m_state = CS_DIED;
+				CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("audio/fall_into_water.mp3");
+			}), nullptr));
 	}
 	else if (m_state == CS_FALL_START)m_state = CS_FALLING;
 	else if (m_state == CS_DIED) m_state = CS_DONE;
