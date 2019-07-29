@@ -49,6 +49,9 @@ bool Platform::init()
 
 void Platform::update(float deltaTime)
 {
+	if (m_state == PFS_SPAWN_PILLAR) m_state = PFS_NONE;
+
+
 	for (auto&callback : m_callbacks)
 		callback->UpdatePosition(_position);
 
@@ -61,6 +64,8 @@ void Platform::update(float deltaTime)
 	}
 
 	if (m_pillars.back()->ReadyForSpawning()) {
+
+		m_state = PFS_SPAWN_PILLAR;
 
 		auto pillar = Pillar::createPillar(this);
 		this->addChild(pillar);

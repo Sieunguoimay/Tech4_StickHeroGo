@@ -25,7 +25,8 @@ GameParticleSystem * GameParticleSystem::createParticleSystemByType(int type)
 GameParticleSystem * GameParticleSystem::createParticleSystem(const char * source_texture)
 {
 	auto particleSystem = new GameParticleSystem();
-	if (particleSystem&&particleSystem->initWithFile(source_texture)) {
+	if (particleSystem/*&&particleSystem->initWithSpriteFrameName(source_texture)*/) {
+		particleSystem->path = source_texture;
 		particleSystem->initParticleSystem();
 		particleSystem->autorelease();
 		return particleSystem;
@@ -105,8 +106,7 @@ void GameParticleSystem::putParticle()
 
 	Vec2 dir(std::cos(CC_DEGREES_TO_RADIANS(r_angleDir)), std::sin(CC_DEGREES_TO_RADIANS(r_angleDir)));
 
-
-	Particle*p = Particle::createGameSpriteWithTexture(this->getTexture());
+	Particle*p = Particle::createGameSpriteWithFrameName(path.c_str());
 	p->setPosition(m_pos+ dir*r_pos);
 	p->setScale(r_scale*m_size / p->getContentSize().width);
 	p->setColor(m_colorOverlay);

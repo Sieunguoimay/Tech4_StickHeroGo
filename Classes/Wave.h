@@ -1,8 +1,9 @@
 #pragma once
 #include"GameSprite.h"
 #include"Platform.h"
-class Wave :public SpriteBatchNode, public MiscSupport,public MoveAlongCallback{
-	std::vector<GameSprite*>m_pSprites;
+class Wave :public GameLayer,public MoveAlongCallback{
+	std::vector<Sprite*>m_pSprites;
+	std::string path;
 	float m_angle;
 	float m_oscillationSpeed;
 	float m_oscillationRangeRatio;

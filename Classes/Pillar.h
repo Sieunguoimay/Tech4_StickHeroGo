@@ -2,6 +2,7 @@
 #include"GameSprite.h"
 #include"Stick.h"
 #include"GameLayer.h"
+#include"Followers.h"
 class Pillar: public GameSprite{
 	bool m_spawned;
 	Stick*m_pStick;
@@ -9,15 +10,14 @@ class Pillar: public GameSprite{
 	DrawNode*m_rect;
 	float m_width1;
 	float m_width2;
+
+	Follower*m_pFollower;
 public:
 	static Pillar*createPillar(GameLayer*layer,bool hasNoRect = false);
 	~Pillar()override;
 	void initPillar(GameLayer*layer,const Vec2&pos,float scaleX, bool hasNoRect, int flagNumber);
 
 	void setPosition(const Vec2&pos)override;
-
-
-	void SetFlag();
 
 	//public usage
 	bool HasDone();
@@ -27,4 +27,6 @@ public:
 	inline float GetWidth1()const { return m_width1; }
 	inline float GetWidth2()const { return m_width2; }
 	void RemoveRect();
+	void SetFollower(Follower*pFollower);
+	inline Follower*GetFollower(){ return m_pFollower; }
 };

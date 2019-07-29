@@ -10,6 +10,7 @@
 #include"OnScreenInfoDisplay.h"
 #include"HomeScene.h"
 #include"ScoreManager.h"
+#include"Followers.h"
 class GameScene: public GameLayer, public HomeSceneCallback{
 	CREATE_FUNC(GameScene);
 	
@@ -23,7 +24,7 @@ class GameScene: public GameLayer, public HomeSceneCallback{
 	void onKeyReleased(EventKeyboard::KeyCode keyCode, Event*event)override;
 
 	void OnPlayButtonClicked()override;
-
+	void NextStep(int score);
 
 	void setupMenu();
 	void menuPauseCallback(Ref*pSender);
@@ -45,6 +46,7 @@ class GameScene: public GameLayer, public HomeSceneCallback{
 	Background*m_pBackground;
 	Clouds*m_pClouds;
 	ScoreManager m_scoreManager;
+	Followers*m_followers;
 public:
 	
 	static Scene* createScene();

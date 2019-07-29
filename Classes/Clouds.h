@@ -4,11 +4,12 @@
 #include"utils/List.h"
 #include"Platform.h"
 
-class Clouds :public SpriteBatchNode, public MiscSupport, public MoveAlongCallback {
+class Clouds :public GameLayer, public MoveAlongCallback {
 	List<GameSprite*>m_clouds;
 	void generateClouds(const Vec2&offset);
 	float m_selfMovement;
 	float m_floatingSpeed;
+	std::string path;
 public:
 
 	//Implementation of GameLayer

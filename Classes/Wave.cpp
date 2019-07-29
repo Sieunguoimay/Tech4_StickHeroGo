@@ -3,7 +3,8 @@
 Wave * Wave::createWave(const char * path, float oscillationSpeed, float oscillationRangeRatio, float movingRatio)
 {
 	auto wave = new Wave();
-	if (wave&&wave->initWithFile(path)) {
+	if (wave) {
+		wave->path = path;
 		wave->m_oscillationSpeed = oscillationSpeed;
 		wave->m_movingRatio = movingRatio;
 		wave->m_oscillationRangeRatio = oscillationRangeRatio;
@@ -20,11 +21,11 @@ void Wave::initWave()
 	this->scheduleUpdate();
 
 	for (int i = 0; i < 3; i++) {
-		auto sprite = GameSprite::createGameSpriteWithTexture(this->getTexture());
+		auto sprite = Sprite::createWithSpriteFrameName(path.c_str());
 		this->addChild(sprite);
 		sprite->setPosition(i==0
 			? (-Vec2(0.0f, 2.0f) +sprite->getContentSize() / 2 )
-			: (m_pSprites.back()->getPosition() + Vec2(m_pSprites.back()->GetWidth(), 0.0f)));
+			: (m_pSprites.back()->getPosition() + Vec2(m_pSprites.back()->getContentSize().width, 0.0f)));
 		m_pSprites.push_back(sprite);
 	}
 
@@ -52,8 +53,8 @@ void Wave::UpdatePosition(const Vec2 & pos)
 
 	auto leftMostSprite = *m_pSprites.begin();
 	auto topRight = this->convertToWorldSpace(leftMostSprite->getPosition() );
-	if (topRight.x + leftMostSprite->GetWidth()/2 < 0) {
-		leftMostSprite->setPosition(m_pSprites.back()->getPosition().x + m_pSprites.back()->GetWidth(), m_pSprites.back()->getPosition().y);
+	if (topRight.x + leftMostSprite->getContentSize().width/2 < 0) {
+		leftMostSprite->setPosition(m_pSprites.back()->getPosition().x + m_pSprites.back()->getContentSize().width, m_pSprites.back()->getPosition().y);
 		m_pSprites.erase(m_pSprites.begin());
 		m_pSprites.push_back(leftMostSprite);
 	}

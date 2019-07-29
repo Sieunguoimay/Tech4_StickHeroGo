@@ -4,7 +4,7 @@
 Background * Background::createBackground(Layer*pZoomingLayer, Platform*pPlatform)
 {
 	auto background = new Background();
-	if (background&&background->initWithFile("sky.png")) {
+	if (background&&background->initWithSpriteFrameName("sky.png")) {
 		background->initBackground(pZoomingLayer,pPlatform);
 		background->autorelease();
 		return background;
@@ -25,7 +25,7 @@ bool Background::initBackground(Layer*pZoomingLayer, Platform*pPlatform)
 	_position += m_visibleSize / 2;
 	
 	
-	m_pSpriteGrass = Sprite::create("background_grass.png");
+	m_pSpriteGrass = Sprite::createWithSpriteFrameName("background_grass.png");
 	m_pSpriteGrass->setPosition(m_visibleSize.width / 2, m_pSpriteGrass->getContentSize().height/2);
 	this->addChild(m_pSpriteGrass);
 

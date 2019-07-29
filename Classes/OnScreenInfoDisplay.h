@@ -24,6 +24,7 @@ public:
 
 class OnScreenInfoDisplay :public GameLayer{
 	Label*m_pTextScore;
+	Label*m_pTextHistoryHigh;
 
 	Reward* m_rewards[ST_TOTAL_NUM];
 
@@ -33,6 +34,6 @@ public:
 	bool init()override;
 	~OnScreenInfoDisplay()override;
 	void SetScore(int score) { m_pTextScore->setString(std::to_string(score)); }
+	void SetHistoryHigh(int highScore) { m_pTextHistoryHigh->setString(String::createWithFormat("History high %d", highScore)->getCString()); }
 	void ShowRewardForEachPillar(int reward,int perfectCount,int gainScore);
-	void SetHighScore(int highScore);
 };

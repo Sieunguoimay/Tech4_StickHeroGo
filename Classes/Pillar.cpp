@@ -5,7 +5,7 @@
 Pillar * Pillar::createPillar(GameLayer*layer, bool hasNoRect)
 {
 	auto pillar = new Pillar();
-	if (pillar&&pillar->initWithFile("pillar.png")) {
+	if (pillar&&pillar->initWithSpriteFrameName("pillar.png")) {
 		pillar->autorelease();
 		return pillar;
 	}
@@ -40,7 +40,7 @@ void Pillar::initPillar(GameLayer*layer, const Vec2&pos, float scaleX, bool hasN
 	
 	Sprite* flag = nullptr;
 	if (flagNumber>0&&flagNumber%10==0) {
-		flag = Sprite::create("flag.png");
+		flag = Sprite::createWithSpriteFrameName("flag.png");
 		flag->setPosition(Vec2(_contentSize.width / 2, _contentSize.height) + Vec2((flag->getContentSize().width-m_width1-7) / scaleX/ 2, flag->getContentSize().height / 2));
 		this->addChild(flag);
 		auto* label = Label::createWithSystemFont(std::to_string(flagNumber), GAME_TEXT_FONT,15);
@@ -95,4 +95,11 @@ void Pillar::RemoveRect()
 				this->removeChild(m_rect, false);
 			}), nullptr
 		));
+}
+
+void Pillar::SetFollower(Follower * pFollower)
+{
+	m_pFollower = pFollower;
+	if(m_pFollower!=nullptr)
+		m_pFollower->setPosition(_position.x, _position.y + _contentSize.height / 2+m_pFollower->getContentSize().height/2);
 }

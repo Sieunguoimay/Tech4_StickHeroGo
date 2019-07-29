@@ -8,7 +8,7 @@ void RandFloatingOnLineSprites::initFloatingOnLineSprites(float y)
 	m_visibleSize = Director::getInstance()->getVisibleSize();
 	m_movingRatio = 0.4f;
 
-	auto sprite = GameSprite::createGameSpriteWithTexture(m_spriteBatchNodes[0]->getTexture());
+	auto sprite = GameSprite::createGameSpriteWithFrameName(m_spriteBatchNodes[0].c_str());
 	sprite->setPosition(Vec2(0,y)+ sprite->getContentSize()/2);
 	this->addChild(sprite);
 	m_sprites.push(sprite);
@@ -23,15 +23,14 @@ RandFloatingOnLineSprites::~RandFloatingOnLineSprites()
 
 void RandFloatingOnLineSprites::AddSpriteBatchNode(const char * file_name)
 {
-	m_spriteBatchNodes.push_back(SpriteBatchNode::create(file_name));
-	this->addChild(m_spriteBatchNodes.back());
+	m_spriteBatchNodes.push_back(file_name);
 }
 
 
 void RandFloatingOnLineSprites::putSprite()
 {
 	if (m_sprites.size() == 0)return;
-	
+
 	float r_x = Utils::map(CCRANDOM_0_1(), 0.0f, 1.0f, 0.0f, m_sprites.back()->GetWidth());
 	float r_scale = Utils::map(CCRANDOM_0_1(), 0.0f, 1.0f, 0.7f, 1.2f);
 	bool r_flip = (int)Utils::map(CCRANDOM_0_1(), 0.0f, 1.0f, 0.0f, 2.0f);
@@ -41,7 +40,7 @@ void RandFloatingOnLineSprites::putSprite()
 		r_index = (int)Utils::map(CCRANDOM_0_1(), 0.0f, 1.0f, 0.0f, (float)m_spriteBatchNodes.size());
 	
 
-	auto sprite = GameSprite::createGameSpriteWithTexture(m_spriteBatchNodes[r_index]->getTexture());
+	auto sprite = GameSprite::createGameSpriteWithFrameName(m_spriteBatchNodes[r_index].c_str());
 	sprite->setScale(r_scale);
 	sprite->setPosition(Vec2(m_sprites.back()->getPosition().x + r_x, m_y)+Vec2(sprite->GetWidth(),sprite->GetHeight()) / 2);
 	sprite->setFlipX(r_flip);

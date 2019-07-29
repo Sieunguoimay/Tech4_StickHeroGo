@@ -3,7 +3,7 @@
 #include"Platform.h"
 
 class RandFloatingOnLineSprites :public GameLayer, public MoveAlongCallback {
-	std::vector<SpriteBatchNode*>m_spriteBatchNodes;
+	std::vector<std::string>m_spriteBatchNodes;
 	std::queue<GameSprite*>m_sprites;
 	float m_y;
 

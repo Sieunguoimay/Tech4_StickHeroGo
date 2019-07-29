@@ -3,7 +3,7 @@
 class Particle: public GameSprite{
 	float m_timeToLive;
 public:
-	CREATE_GAME_SPRITE_WITH_TEXTURE_FUNC(Particle);
+	CREATE_GAME_SPRITE_WITH_FRAME_NAME(Particle);
 	void initGameSprite()override;
 	~Particle()override;
 	

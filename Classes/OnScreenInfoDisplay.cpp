@@ -3,8 +3,8 @@
 
 
 void Reward::initReward(const char* name, const char* title) {
-	m_bg1 = Sprite::create((std::string(name)+".png").c_str());
-	m_bg2 = Sprite::create((std::string(name) + "_2.png").c_str());
+	m_bg1 = Sprite::createWithSpriteFrameName((std::string(name)+".png").c_str());
+	m_bg2 = Sprite::createWithSpriteFrameName((std::string(name) + "_2.png").c_str());
 	m_label = Label::createWithSystemFont(title, "Calibri", 30.0f);
 	m_labelPerfectScore = Label::createWithSystemFont("x2 +24", "Calibri", 20.0f);
 
@@ -84,6 +84,10 @@ bool OnScreenInfoDisplay::init()
 	this->addChild(m_pTextScore);
 	m_pTextScore->setPosition(m_visibleSize.width / 2, m_visibleSize.height * 0.8f);
 
+	m_pTextHistoryHigh = Label::createWithSystemFont("History high", "Calibri", 15.0f);
+	this->addChild(m_pTextHistoryHigh);
+	m_pTextHistoryHigh->setPosition(m_visibleSize.width / 2, m_visibleSize.height * 0.9f);
+
 
 	m_rewards[ST_PERFECT] = Reward::create();
 	m_rewards[ST_PERFECT]->initReward("reward_perfect", "PERFECT");
@@ -121,7 +125,3 @@ void OnScreenInfoDisplay::ShowRewardForEachPillar(int reward, int perfectCount, 
 
 }
 
-void OnScreenInfoDisplay::SetHighScore(int highScore)
-{
-
-}

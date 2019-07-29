@@ -14,7 +14,7 @@ enum ParticleSystemStates {
 	PSS_EMIT,
 	PSS_EMITTED
 };
-class GameParticleSystem :public SpriteBatchNode , public MiscSupport, public MoveAlongCallback{
+class GameParticleSystem :public GameLayer, public MoveAlongCallback{
 	int m_state;
 	float m_emittingDuration;
 	Vec2 m_pos;
@@ -35,7 +35,7 @@ class GameParticleSystem :public SpriteBatchNode , public MiscSupport, public Mo
 
 	void initParticleSystem();
 
-
+	std::string path;
 public:
 	static GameParticleSystem* createParticleSystemByType(int type);
 	static GameParticleSystem* createParticleSystem(const char*source_texture);

@@ -12,8 +12,7 @@ bool HomeScene::init()
 	auto menuItemPlayButton = MenuItemImage::create("button_play.png", "button_play_clicked.png",CC_CALLBACK_0(HomeScene::OnPlayButtonClicked,this));
 	auto menu = Menu::create(menuItemPlayButton, nullptr);
 	this->addChild(menu);
-	menuItemPlayButton->setScale(100.0f / menuItemPlayButton->getContentSize().width);
-
+	menuItemPlayButton->setPosition(0, -m_visibleSize.height/4);
 	m_bestScore = Label::createWithSystemFont("BEST 1234", "Calibri",30.0f);
 	this->addChild(m_bestScore);
 	m_bestScore->setPosition(Vec2(0.0f, m_visibleSize.height / 4) + m_visibleSize / 2);
