@@ -1,5 +1,5 @@
 #include"ShowScoreScene.h"
-
+#include"SimpleAudioEngine.h"
 bool ShowScoreScene::init() {
 
 	m_touchListener = EventListenerTouchOneByOne::create();
@@ -33,6 +33,7 @@ bool ShowScoreScene::init() {
 }
 void ShowScoreScene::OnOkButtonClicked()
 {
+	CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("audio/button_clicked.mp3");
 	Hide();
 }
 void ShowScoreScene::Show(){
@@ -51,3 +52,4 @@ void ShowScoreScene::Hide(){
 				m_callback->OnPlayButtonClicked(CI_SHOW_SCORE_SCENE);
 		}),nullptr));
 }
+

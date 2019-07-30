@@ -123,7 +123,6 @@ bool OnScreenInfoDisplay::init()
 
 OnScreenInfoDisplay::~OnScreenInfoDisplay()
 {
-	delete m_pTextScore;
 	CCLOG("OnScreenInfoDisplay deleted");
 }
 
@@ -131,7 +130,5 @@ void OnScreenInfoDisplay::ShowRewardForEachPillar(int reward, int perfectCount, 
 {
 	m_pStarParticleSystem->Emit(0.2f, m_rewards[ST_PERFECT]->getPosition());
 	if(reward<ST_TOTAL_NUM) m_rewards[reward]->Show(perfectCount,gainScore);
-
-
 }
 

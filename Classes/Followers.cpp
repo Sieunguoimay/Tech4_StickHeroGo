@@ -2,6 +2,8 @@
 #include"GameParticleSystem.h"
 #include"utils/Definitions.h"
 #include"Platform.h"
+#include"SimpleAudioEngine.h"
+
 Followers::Followers(Platform* pParent, Character * pLeader)
 	:m_pParent(pParent), m_pLeader(pLeader) 
 {
@@ -40,6 +42,7 @@ void Followers::AddFollower(Follower*follower, std::function<void()>callback)
 	m_animals.push_back(follower);
 	m_particleSystem->SetCallback(callback).Emit(0.1f,follower->getPosition());
 
+	CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("audio/dog_bark.mp3");
 
 
 	follower->addChild(SpriteBatchNode::create("dog_run.png"));

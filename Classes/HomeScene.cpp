@@ -1,5 +1,6 @@
 #include "HomeScene.h"
 #include"utils//Definitions.h"
+#include"SimpleAudioEngine.h"
 bool HomeScene::init()
 {
 	m_touchListener = EventListenerTouchOneByOne::create();
@@ -50,6 +51,8 @@ void HomeScene::Hide()
 
 void HomeScene::OnPlayButtonClicked()
 {
+	CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("audio/button_clicked.mp3");
+
 	if(m_callback!=nullptr)
 		m_callback->OnPlayButtonClicked(CI_HOME_SCENE);
 }

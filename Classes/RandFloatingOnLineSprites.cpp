@@ -52,6 +52,7 @@ void RandFloatingOnLineSprites::UpdatePosition(const Vec2& pos)
 {
 	this->setPosition(pos*m_movingRatio);
 
+
 	auto front_pos = this->convertToWorldSpace(m_sprites.front()->getPosition());
 	auto back_pos = this->convertToWorldSpace(m_sprites.back()->getPosition());
 	if (front_pos.x + m_sprites.front()->getContentSize().width/2 < 0) {

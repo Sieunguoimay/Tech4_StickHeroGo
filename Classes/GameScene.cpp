@@ -196,6 +196,8 @@ void GameScene::initAudio()
 	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("audio/reward_perfect3.mp3");
 	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("audio/stick_enlongating.mp3");
 	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("audio/fall_into_water.mp3");
+	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("audio/dog_bark.mp3");
+	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("audio/button_clicked.mp3");
 }
 
 
@@ -388,8 +390,9 @@ void GameScene::onGameover()
 void GameScene::resetGame()
 {
 	m_scoreManager.SaveData();
+	Director::getInstance()->popScene();
 	SpriteFrameCache::getInstance()->destroyInstance();
 
 	CCLOG("GAME OVER");
-	Director::getInstance()->replaceScene(TransitionFade::create(0.5f,GameScene::createScene(), Color3B(255, 255, 255)));
+	Director::getInstance()->pushScene(TransitionFade::create(0.5f,GameScene::createScene(), Color3B(255, 255, 255)));
 }

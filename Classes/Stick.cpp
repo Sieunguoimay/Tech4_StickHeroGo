@@ -55,6 +55,6 @@ void Stick::Enlongate()
 {
 	if (m_state == START) {
 		m_state = ENLONGATING;
-		m_soundId = CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("audio/stick_enlongating.mp3");
+		m_soundId = CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("audio/stick_enlongating.mp3",true);
 	}
 }
