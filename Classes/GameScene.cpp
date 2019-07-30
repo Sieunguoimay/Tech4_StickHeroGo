@@ -25,7 +25,6 @@ bool GameScene::init()
 	scheduleUpdate();
 	setupEventHandler();
 
-	initAudio();
 	initGameObject();
 
 
@@ -178,7 +177,9 @@ void GameScene::OnPlayButtonClicked(int callerId)
 		_eventDispatcher->resumeEventListenersForTarget(this);
 		m_pOnScreenInfoDisplay->setVisible(true);
 		m_pPlatform->FirstMovementOnGameStart();
-		m_pCharacter->MoveToTarget(m_pPlatform->GetFirstPillar()->GetTopRightPoint().x - m_pCharacter->getContentSize().width / 2 - m_pCharacter->getPosition().x - 5, 0.0f);
+		m_pCharacter->FirstMovementOnGameStart(Vec2(
+			m_pPlatform->GetFirstPillar()->GetTopRightPoint().x - m_pCharacter->getContentSize().width / 2 - 5,
+			m_pPlatform->GetFirstPillar()->GetTopRightPoint().y+ m_pCharacter->getContentSize().height / 2));
 	}
 	else if (callerId == CI_SHOW_SCORE_SCENE) {
 		resetGame();
@@ -188,7 +189,7 @@ void GameScene::OnPlayButtonClicked(int callerId)
 
 
 
-void GameScene::initAudio()
+void GameScene::initAssets()
 {
 	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("audio/reward_good.mp3");
 	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("audio/reward_great.mp3");
@@ -199,6 +200,8 @@ void GameScene::initAudio()
 	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("audio/fall_into_water.mp3");
 	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("audio/dog_bark.mp3");
 	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("audio/button_clicked.mp3");
+	CocosDenshion::SimpleAudioEngine::getInstance()->preloadBackgroundMusic("audio/ambient_sound.mp3");
+
 }
 
 
@@ -206,7 +209,8 @@ void GameScene::update(float deltaTime)
 {
 	if (m_pPlatform->GetState() == PFS_SPAWN_PILLAR) {
 		//some conditions here...
-		if(m_pPlatform->GetPillarCount()%2==0)
+		int n = m_followers->GetFollowerNum()* m_followers->GetFollowerNum() +5;
+		if(m_pPlatform->GetPillarCount()%n==0 && m_pPlatform->GetPillarCount() > m_followers->GetFollowerNum()*n)
 			m_pPlatform->GetLastPillar()->SetFollower(m_followers->SpawnFollower());
 
 	}
@@ -308,26 +312,24 @@ void GameScene::NextStep(int score)
 void GameScene::initGameObject()
 {
 
+
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("common_sprites.plist");
-	this->addChild(SpriteBatchNode::create("common_sprites.png"));
-
-	m_themeIndex = (rand() % 100)%3+1;
-
-	SpriteFrameCache::getInstance()->addSpriteFramesWithFile(String::createWithFormat("theme%d.plist", m_themeIndex)->getCString());
-	this->addChild(SpriteBatchNode::create(String::createWithFormat("theme%d.png", m_themeIndex)->getCString()));
-
-
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("dog_run.plist");
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("dog_stand.plist");
+	m_themeIndex = (rand() % 100) % 3 + 1;
+	SpriteFrameCache::getInstance()->addSpriteFramesWithFile(String::createWithFormat("theme%d.plist", m_themeIndex)->getCString());
+
+	this->addChild(SpriteBatchNode::create(String::createWithFormat("theme%d.png", m_themeIndex)->getCString()));
+	this->addChild(SpriteBatchNode::create("common_sprites.png"));
 
 
 	m_pZoomingLayer = Layer::create();
 	m_pZoomingLayer2 = Layer::create();
 	m_pZoomingLayer->setAnchorPoint(Vec2(0.5f, 0.0f));
 	m_pZoomingLayer2->setAnchorPoint(Vec2(0.5f, 0.0f));
-	this->addChild(m_pZoomingLayer,GAME_LAYER_NEG_1);
+	this->addChild(m_pZoomingLayer, GAME_LAYER_NEG_1);
 	this->addChild(m_pZoomingLayer2);
-	
+
 
 	m_pPlatform = Platform::createPlatform();
 
@@ -337,7 +339,7 @@ void GameScene::initGameObject()
 
 	for (int i = 0; i < PS_TOTAL_NUM; i++) {
 		m_particleSystems[i] = GameParticleSystem::createParticleSystemByType(i);
-		m_pPlatform->addChild(m_particleSystems[i],GAME_LAYER_1);
+		m_pPlatform->addChild(m_particleSystems[i], GAME_LAYER_1);
 	}
 	m_particleSystems[PS_SMOKE]->SetMeanDistance(50);
 	m_particleSystems[PS_WATER]->setGlobalZOrder(GAME_LAYER_2);
@@ -345,8 +347,8 @@ void GameScene::initGameObject()
 	m_pCharacter = Character::createCharacter();
 	m_pPlatform->addChild(m_pCharacter);
 	m_pCharacter->setPosition(
-		m_pPlatform->GetCurrentPillar()->getPosition() 
-		+ Vec2(0.0f,m_pPlatform->GetCurrentPillar()->GetHeight()/2+m_pCharacter->GetHeight()/2));
+		m_pPlatform->GetCurrentPillar()->getPosition()
+		+ Vec2(0.0f, m_pPlatform->GetCurrentPillar()->GetHeight() / 2 + m_pCharacter->GetHeight() / 2));
 
 	m_pClouds = Clouds::createClouds();
 	m_pZoomingLayer2->addChild(m_pClouds);
@@ -372,9 +374,10 @@ void GameScene::initGameObject()
 	m_pOnScreenInfoDisplay->SetHistoryHigh(m_scoreManager.GetHighScore());
 
 
-	m_followers = new Followers(m_pPlatform, m_pCharacter);
-}
+	m_followers = new Followers(m_pPlatform, m_pCharacter, m_scoreManager.GetFollowerNum(),m_pPlatform->GetCurrentPillar()->GetWidth());
 
+	CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic("audio/ambient_sound.mp3", true);
+}
 void GameScene::onGameover()
 {
 	m_pShowScoreScene = ShowScoreScene::create();
@@ -384,16 +387,15 @@ void GameScene::onGameover()
 	m_pShowScoreScene->SetBestScore(m_scoreManager.GetHighScore());
 	m_pShowScoreScene->SetScore(m_scoreManager.GetScore());
 	_eventDispatcher->pauseEventListenersForTarget(this);
-
-
 }
 
 void GameScene::resetGame()
 {
+
+	m_scoreManager.SetFollowerNum(m_followers->GetFollowerNum());
 	m_scoreManager.SaveData();
 	Director::getInstance()->popScene();
 	SpriteFrameCache::getInstance()->destroyInstance();
-
-	CCLOG("GAME OVER");
+	 
 	Director::getInstance()->pushScene(TransitionFade::create(0.5f,GameScene::createScene(), Color3B(255, 255, 255)));
 }

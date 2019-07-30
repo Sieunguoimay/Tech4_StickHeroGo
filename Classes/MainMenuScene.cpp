@@ -60,7 +60,7 @@ bool MainMenu::init()
  //   menu->setPosition(Vec2::ZERO);
  //   this->addChild(menu, 1);
 
-	auto background = Sprite::create("sky.png");
+	auto background = Sprite::create("splash.png");
 	if (background == nullptr) {
 		CCLOG("Error: failed to load file sky.png");
 	}
@@ -69,9 +69,9 @@ bool MainMenu::init()
 		addChild(background);
 	}
 
-	this->runAction(Sequence::create(DelayTime::create(1.0f), CallFunc::create([]() {
-		Director::getInstance()->pushScene(GameScene::createScene());
-	}), nullptr));
+	this->runAction(Sequence::create(DelayTime::create(1.2f), CallFunc::create([]() {
+		Director::getInstance()->pushScene(TransitionCrossFade::create(0.5f, GameScene::createScene()));
+		}), nullptr));
 
 	CCLOG("MainMenu created");
     return true;
@@ -85,7 +85,7 @@ void MainMenu::menuCloseCallback(Ref* pSender)
 
 void MainMenu::menuEnterGameCallback(cocos2d::Ref * pSender)
 {
-	Director::getInstance()->pushScene(GameScene::createScene());
+	Director::getInstance()->replaceScene(TransitionCrossFade::create(0.5f,GameScene::createScene()));
 }
 
 /*

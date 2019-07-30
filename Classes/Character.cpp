@@ -63,44 +63,53 @@ void Character::initCharacter()
 void Character::update(float deltaTime) {
 
 
-	if ((m_state == CS_FALL) && _position.x >= m_fallPoint) {
-		m_state = CS_FALL_START;
-		this->stopAllActions();
-		CCLOG("Player: Hey fall action");
-		this->runAction(Sequence::create(
-			EaseOut::create(MoveBy::create(0.5f, Vec2(0.0f, -_position.y)), 0.3f),
-			CallFunc::create([this]() {
-				if (m_state == CS_FALLING) m_state = CS_DIED;
-				CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("audio/fall_into_water.mp3");
-			}), nullptr));
-	}
-	else if (m_state == CS_FALL_START)m_state = CS_FALLING;
+	if (m_state == CS_FALL_START)m_state = CS_FALLING;
 	else if (m_state == CS_DIED) m_state = CS_DONE;
 	else if (m_state == CS_STAND) m_state = CS_STANDING;
 	else if (m_state == CS_RUN)m_state = CS_RUNNING;
 		
 }
 
+void Character::FirstMovementOnGameStart(const Vec2& pos)
+{
+	this->runAction(MoveTo::create(0.4f, pos));
+}
+
 void Character::MoveToTarget(float distance, float fallDistance)
 {
+	m_xTarget = distance;
 	if (fallDistance > 0) {
 		fallDistance += GetWidth() / 2 + 10;
 		m_state = CS_FALL;
 		m_fallPoint = _position.x + fallDistance;
+		m_xTarget = fallDistance;
 	}
 	else {
 		m_state = CS_RUN;
 	}
 
-	m_xTarget = std::max(distance, fallDistance);
 	m_moveAction = MoveBy::create(1.0f, Vec2(m_xTarget, 0.0f));
 	this->stopAllActions();
 	this->runAction(
 		Sequence::create(m_moveAction, 
 			CallFunc::create([this]() {
+
 				this->stopAllActions();
-				this->runAction(m_animateActions[CS_STANDING]);
-				m_state = CS_STAND;
+
+				if (m_state == CS_RUN) {
+					m_state = CS_STAND;
+					this->runAction(m_animateActions[CS_STANDING]);
+				}
+				else if(m_state == CS_FALL){
+					m_state = CS_FALL_START;
+					this->runAction(Sequence::create(
+						EaseOut::create(MoveBy::create(0.5f, Vec2(0.0f, -_position.y)), 0.3f),
+						CallFunc::create([this]() {
+							if (m_state == CS_FALLING) m_state = CS_DIED;
+							CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("audio/fall_into_water.mp3");
+							}), nullptr));
+
+				}
 			}),nullptr));
 	this->runAction(m_animateActions[CS_RUNNING]);
 }

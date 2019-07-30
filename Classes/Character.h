@@ -22,6 +22,7 @@ public:
 	static Character*createCharacter();
 	void initCharacter();
 	void update(float deltaTime)override;
+	void FirstMovementOnGameStart(const Vec2&pos);
 	void MoveToTarget(float distance,float fallingDistance);
 	inline int GetState()const { return m_state; }
 	inline float GetNextDistance()const { return m_xTarget; }

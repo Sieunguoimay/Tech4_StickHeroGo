@@ -14,10 +14,18 @@ bool HomeScene::init()
 	auto menu = Menu::create(menuItemPlayButton, nullptr);
 	this->addChild(menu);
 	menuItemPlayButton->setPosition(0, -m_visibleSize.height/4);
-	m_bestScore = Label::createWithSystemFont("BEST 1234", "Calibri",30.0f);
-	this->addChild(m_bestScore);
-	m_bestScore->setPosition(Vec2(0.0f, m_visibleSize.height / 4) + m_visibleSize / 2);
+	
 
+
+
+	auto logo = Sprite::createWithSpriteFrameName("logo.png");
+	this->addChild(logo);
+	logo->setPosition(Vec2(10.0f, m_visibleSize.height / 3) + m_visibleSize / 2);
+
+
+	m_bestScore = Label::createWithSystemFont("BEST 1234", "Calibri", 25.0f);
+	this->addChild(m_bestScore);
+	m_bestScore->setPosition(Vec2(m_visibleSize.width/2, logo->getPosition().y-logo->getContentSize().height/2-20));
 	return true;
 }
 

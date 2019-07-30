@@ -14,10 +14,11 @@ class Followers {
 	std::vector<Follower*>m_animals;
 	class GameParticleSystem*m_particleSystem;
 public:
-	Followers(Platform*pParent, Character*pLeader);
+	Followers(Platform*pParent, Character*pLeader, int initialNum, float initialSpace);
 	~Followers();
 	
 	Follower* SpawnFollower();
-	void AddFollower(Follower*follower, std::function<void()>callback);
+	void AddFollower(Follower*follower, std::function<void()>callback, float initialSpace = -1.0f);
 	void Update(float deltaTime);
+	int GetFollowerNum()const { return m_animals.size(); }
 };

@@ -7,7 +7,7 @@
             <key>button_play.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2,565},{250,250}}</string>
+                <string>{{254,270},{250,250}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
@@ -20,7 +20,7 @@
             <key>button_play_clicked.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{178,2},{250,250}}</string>
+                <string>{{2,270},{250,250}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
@@ -33,24 +33,37 @@
             <key>flag.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2,2},{174,291}}</string>
+                <string>{{517,2},{174,291}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
-                <false/>
+                <true/>
                 <key>sourceColorRect</key>
                 <string>{{0,0},{174,291}}</string>
                 <key>sourceSize</key>
                 <string>{174,291}</string>
             </dict>
+            <key>logo.png</key>
+            <dict>
+                <key>frame</key>
+                <string>{{2,2},{513,266}}</string>
+                <key>offset</key>
+                <string>{0,4}</string>
+                <key>rotated</key>
+                <false/>
+                <key>sourceColorRect</key>
+                <string>{{0,0},{513,266}}</string>
+                <key>sourceSize</key>
+                <string>{513,274}</string>
+            </dict>
             <key>main_character.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2,817},{59,64}}</string>
+                <string>{{810,2},{59,64}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
-                <false/>
+                <true/>
                 <key>sourceColorRect</key>
                 <string>{{0,0},{59,64}}</string>
                 <key>sourceSize</key>
@@ -59,11 +72,11 @@
             <key>particle_texture.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{53,942},{48,46}}</string>
+                <string>{{935,53},{48,46}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
-                <true/>
+                <false/>
                 <key>sourceColorRect</key>
                 <string>{{0,0},{48,46}}</string>
                 <key>sourceSize</key>
@@ -72,7 +85,7 @@
             <key>particle_texture_smoke.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2,883},{57,57}}</string>
+                <string>{{876,2},{57,57}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
@@ -85,7 +98,7 @@
             <key>particle_texture_water.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2,942},{49,49}}</string>
+                <string>{{935,2},{49,49}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
@@ -98,7 +111,7 @@
             <key>reward_good.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{522,252},{248,248}}</string>
+                <string>{{502,522},{248,248}}</string>
                 <key>offset</key>
                 <string>{0,1}</string>
                 <key>rotated</key>
@@ -111,7 +124,7 @@
             <key>reward_good_2.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{680,2},{248,248}}</string>
+                <string>{{252,772},{248,248}}</string>
                 <key>offset</key>
                 <string>{0,1}</string>
                 <key>rotated</key>
@@ -124,7 +137,7 @@
             <key>reward_great.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{430,2},{248,248}}</string>
+                <string>{{252,522},{248,248}}</string>
                 <key>offset</key>
                 <string>{0,1}</string>
                 <key>rotated</key>
@@ -137,7 +150,7 @@
             <key>reward_great_2.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{272,254},{248,248}}</string>
+                <string>{{2,772},{248,248}}</string>
                 <key>offset</key>
                 <string>{0,1}</string>
                 <key>rotated</key>
@@ -150,7 +163,7 @@
             <key>reward_perfect.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{254,565},{248,248}}</string>
+                <string>{{2,522},{248,248}}</string>
                 <key>offset</key>
                 <string>{0,1}</string>
                 <key>rotated</key>
@@ -163,7 +176,7 @@
             <key>reward_perfect_2.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2,295},{268,268}}</string>
+                <string>{{517,178},{268,268}}</string>
                 <key>offset</key>
                 <string>{0,1}</string>
                 <key>rotated</key>
@@ -183,7 +196,7 @@
             <key>size</key>
             <string>{1024,1024}</string>
             <key>smartupdate</key>
-            <string>$TexturePacker:SmartUpdate:c6e0b576cecbc091e26ad1dcd7afec38:1/1$</string>
+            <string>$TexturePacker:SmartUpdate:387c7a4693bfb2ca98c12c534e830cfd:1/1$</string>
             <key>textureFileName</key>
             <string>common_sprites.png</string>
         </dict>
