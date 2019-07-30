@@ -105,8 +105,9 @@ void GameScene::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::E
 
 		break;
 	case EventKeyboard::KeyCode::KEY_SPACE:
-		if (pillar != nullptr&&pillar->GetStick()->GetState() == START)
-			pillar->GetStick()->SetState(ENLONGATING);
+		auto pillar = m_pPlatform->GetCurrentPillar();
+		if (pillar != nullptr)
+			pillar->GetStick()->Enlongate();
 		break;
 	}
 }

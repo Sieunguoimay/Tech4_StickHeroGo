@@ -55,6 +55,7 @@ void Stick::Enlongate()
 {
 	if (m_state == START) {
 		m_state = ENLONGATING;
+		CCLOG("Speak up");
 		m_soundId = CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("audio/stick_enlongating.mp3",true);
 	}
 }
