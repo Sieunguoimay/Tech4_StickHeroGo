@@ -21,3 +21,4 @@ GameSprite * GameSprite::createGameSpriteWithTexture(Texture2D * texture)
 	CC_SAFE_DELETE(gameSprite);
 	return nullptr;
 }
+

@@ -23,7 +23,7 @@ bool Background::initBackground(Layer*pZoomingLayer, Platform*pPlatform)
 {
 	scheduleUpdate();
 	_position += m_visibleSize / 2;
-	
+    this->setContentSize(m_visibleSize);
 	
 	m_pSpriteGrass = Sprite::createWithSpriteFrameName("background_grass.png");
 	m_pSpriteGrass->setPosition(m_visibleSize.width / 2, m_pSpriteGrass->getContentSize().height/2);

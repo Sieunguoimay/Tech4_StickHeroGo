@@ -22,6 +22,8 @@ Clouds::~Clouds()
 void Clouds::initClouds()
 {
 	this->scheduleUpdate();
+    this->setContentSize(Director::getInstance()->getVisibleSize());
+    
 	for (int i = 0; i < 5; i++)
 		generateClouds(Vec2(0.0f,0.0f));
 	
@@ -33,15 +35,20 @@ void Clouds::initClouds()
 
 void Clouds::update(float deltaTime)
 {
+    
 	m_selfMovement += m_floatingSpeed * deltaTime;
-
+    
 	for (auto it = m_clouds.first(); it != m_clouds.tail; it = it->next) {
 		auto pos = this->convertToWorldSpace(it->data->getPosition());
+        CCLOG("positionX : %f",pos.x);
 		auto size = it->data->GetSize();
-		if (pos.x + size.width / 2 < 0) {
-			this->removeChild(it->data,true);
+        CCLOG("size.width : %f",size.width);
+		if (pos.x - size.width / 2 < 0) {
+			//this->removeChild(it->data,true);
 			it = m_clouds.erase(it);
+            
 			generateClouds(Vec2(-_position.x+m_visibleSize.width,0.0f));
+            
 		}
 	}
 }

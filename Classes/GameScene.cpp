@@ -345,7 +345,7 @@ void GameScene::initGameObject()
 	m_particleSystems[PS_WATER]->setGlobalZOrder(GAME_LAYER_2);
 
 	m_pCharacter = Character::createCharacter();
-	m_pPlatform->addChild(m_pCharacter);
+	m_pPlatform->addChild(m_pCharacter,1);
 	m_pCharacter->setPosition(
 		m_pPlatform->GetCurrentPillar()->getPosition()
 		+ Vec2(0.0f, m_pPlatform->GetCurrentPillar()->GetHeight() / 2 + m_pCharacter->GetHeight() / 2));

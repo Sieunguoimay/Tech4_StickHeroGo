@@ -92,11 +92,11 @@ void Character::MoveToTarget(float distance, float fallDistance)
 	this->stopAllActions();
 	this->runAction(
 		Sequence::create(m_moveAction, 
-			CallFunc::create([this]() {
+			CallFunc::create([=]() {
 
 				this->stopAllActions();
 
-				if (m_state == CS_RUN) {
+				if (m_state == CS_RUNNING) {
 					m_state = CS_STAND;
 					this->runAction(m_animateActions[CS_STANDING]);
 				}
