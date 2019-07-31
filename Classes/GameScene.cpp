@@ -14,6 +14,7 @@ Scene * GameScene::createScene()
 
 GameScene::~GameScene()
 {
+	
 	delete m_followers;
 	CCLOG("GameScene Deleted");
 }
@@ -217,6 +218,7 @@ void GameScene::update(float deltaTime)
 
 	auto pillar = m_pPlatform->GetCurrentPillar();
 
+
 	if (pillar != nullptr) {
 		if (pillar->GetStick()->GetState() == FELL) {
 
@@ -265,13 +267,16 @@ void GameScene::update(float deltaTime)
 			pillar->RemoveRuler();
 		}
 	}
+	if (m_pCharacter->GetState() == CharacterState::CS_STAND) {
+
+
+	}
 	if (m_pCharacter->GetState() == CharacterState::CS_FALL_START) {
 		CCLOG("CS_FALL_START");
-		pillar->GetStick()->Fall();
-	}
-	else if (m_pCharacter->GetState() == CharacterState::CS_STAND) {
-		if(m_pPlatform->GetPillarCount()<7)
-			m_pPlatform->AddRulerToCurrentPilar();
+		if (pillar != nullptr) {
+			auto stick = pillar->GetStick();
+			if (stick) stick->Fall();
+		}
 	}
 	if (m_pCharacter->GetState() == CharacterState::CS_DIED) {
 		m_particleSystems[PS_WATER]

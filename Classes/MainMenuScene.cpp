@@ -70,7 +70,7 @@ bool MainMenu::init()
 	}
 
 	this->runAction(Sequence::create(DelayTime::create(1.2f), CallFunc::create([]() {
-		Director::getInstance()->pushScene(TransitionCrossFade::create(0.5f, GameScene::createScene()));
+		Director::getInstance()->pushScene(TransitionFade::create(0.5f, GameScene::createScene(),Color3B(255,255,255)));
 		}), nullptr));
 
 	CCLOG("MainMenu created");

@@ -26,8 +26,7 @@ Followers::Followers(Platform* pParent, Character * pLeader,int initialNum, floa
 
 	for (int i = 0, n = m_animals.size(); i < n; i++) {
 		auto& a = m_animals[i];
-		a->stopAllActions();
-		a->runAction(Sequence::create(MoveTo::create(0.4f, Vec2(
+		a->runAction(Sequence::create(MoveTo::create(1.0f, Vec2(
 			endPointX - w * (n - i),
 			m_pLeader->getPosition().y - m_pLeader->GetHeight() / 2 + a->GetHeight() / 2)),
 

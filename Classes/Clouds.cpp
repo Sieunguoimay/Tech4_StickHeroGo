@@ -40,12 +40,11 @@ void Clouds::update(float deltaTime)
     
 	for (auto it = m_clouds.first(); it != m_clouds.tail; it = it->next) {
 		auto pos = this->convertToWorldSpace(it->data->getPosition());
-		auto size = it->data->GetSize();
-		if (pos.x - size.width / 2 < 0) {
+		float width= it->data->GetWidth();
+		if (pos.x + width < 0) {
 			this->removeChild(it->data,true);
 			it = m_clouds.erase(it);
 			generateClouds(Vec2(-_position.x+m_visibleSize.width,0.0f));
-            
 		}
 	}
 }
