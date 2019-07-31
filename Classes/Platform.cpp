@@ -107,7 +107,7 @@ void Platform::update(float deltaTime)
 
 }
 
-float Platform::MoveAndCalculateScale()
+float Platform::MoveAndCalculateScale(float distance)
 {
 	if (m_moveFlag) return -1.0f;
 	auto& pillar1Pos = m_pillars[m_nextPillarIndex]->getPosition();
@@ -120,12 +120,11 @@ float Platform::MoveAndCalculateScale()
 
 
 	auto target = 0.5f * (pillar1Pos.x - pillar1Size.width * pillar1ScaleX / 2 + pillar2Pos.x + pillar2Size.width * pillar2ScaleX / 2);
-	float distance = target - (-this->_position.x) - m_visibleSize.width / 2;
-
-
+	float d = target - (-this->_position.x) - m_visibleSize.width / 2;
+	if (distance != -1.0f) d = distance;
 	m_moveFlag = true;
 	m_pMoveAction = Sequence::create(
-		MoveBy::create(1.0f, Vec2(-distance, 0)),
+		MoveBy::create(1.0f, Vec2(-d, 0)),
 		CallFunc::create([this]() {
 			m_moveFlag = false;
 			m_nextPillarIndex++;

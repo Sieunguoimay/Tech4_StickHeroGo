@@ -35,14 +35,13 @@ public:
 	void update(float deltaTime)override;
 
 	//public usage
-	float MoveAndCalculateScale();
+	float MoveAndCalculateScale(float distance = -1);
 	inline float GetFuturePosX() const {return m_futurePosX;}
 	inline Pillar*GetCurrentPillar() const { if (m_nextPillarIndex >0)return m_pillars[m_nextPillarIndex - 1]; return nullptr; }
 	inline Pillar* GetNextPillar() const { if (m_nextPillarIndex >= 0)return m_pillars[m_nextPillarIndex]; return nullptr; }
 	inline Pillar*GetFirstPillar() const { return m_pillars[0]; }
 	inline Pillar*GetLastPillar() const { return m_pillars.back(); }
 	inline void RegisterMoveAlongCallback(MoveAlongCallback*callback) { m_callbacks.push_back(callback); }
-	inline void StopMoving(){this->stopAction(m_pMoveAction); }
 	inline int GetState()const { return m_state; }
 	inline int GetPillarCount() const { return m_pillarCountSoFar; }
 	void FirstMovementOnGameStart();

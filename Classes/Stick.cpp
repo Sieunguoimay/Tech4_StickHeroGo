@@ -59,3 +59,8 @@ void Stick::Enlongate()
 		m_soundId = CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("audio/stick_enlongating.mp3",true);
 	}
 }
+
+void Stick::Fall()
+{
+	this->runAction(EaseOut::create(RotateTo::create(0.4f, 180.0f), 0.25f));
+}

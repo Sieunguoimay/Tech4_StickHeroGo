@@ -67,6 +67,7 @@ void Character::update(float deltaTime) {
 	else if (m_state == CS_DIED) m_state = CS_DONE;
 	else if (m_state == CS_STAND) m_state = CS_STANDING;
 	else if (m_state == CS_RUN)m_state = CS_RUNNING;
+	else if (m_state == CS_ABOUT_TO_FALL)m_state = CS_FALL;
 		
 }
 
@@ -80,7 +81,7 @@ void Character::MoveToTarget(float distance, float fallDistance)
 	m_xTarget = distance;
 	if (fallDistance > 0) {
 		fallDistance += GetWidth() / 2 + 10;
-		m_state = CS_FALL;
+		m_state = CS_ABOUT_TO_FALL;
 		m_fallPoint = _position.x + fallDistance;
 		m_xTarget = fallDistance;
 	}
@@ -88,7 +89,7 @@ void Character::MoveToTarget(float distance, float fallDistance)
 		m_state = CS_RUN;
 	}
 
-	m_moveAction = MoveBy::create(1.0f, Vec2(m_xTarget, 0.0f));
+	m_moveAction = MoveBy::create(m_xTarget/200.0f, Vec2(m_xTarget, 0.0f));
 	this->stopAllActions();
 	this->runAction(
 		Sequence::create(m_moveAction, 

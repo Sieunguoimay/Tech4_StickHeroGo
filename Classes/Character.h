@@ -5,6 +5,7 @@ enum CharacterState {
 	CS_RUNNING,
 	CS_STAND,
 	CS_RUN,
+	CS_ABOUT_TO_FALL,
 	CS_FALL,
 	CS_FALL_START,
 	CS_FALLING,

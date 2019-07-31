@@ -266,8 +266,8 @@ void GameScene::update(float deltaTime)
 		}
 	}
 	if (m_pCharacter->GetState() == CharacterState::CS_FALL_START) {
-		m_pPlatform->StopMoving();
 		CCLOG("CS_FALL_START");
+		pillar->GetStick()->Fall();
 	}
 	else if (m_pCharacter->GetState() == CharacterState::CS_STAND) {
 		if(m_pPlatform->GetPillarCount()<7)
@@ -291,14 +291,15 @@ void GameScene::NextStep(int score)
 	auto nextPillar = m_pPlatform->GetNextPillar();
 	auto pillar = m_pPlatform->GetCurrentPillar();
 	float stickLength = pillar->GetStick()->GetLength();
+	float fallingDistance =
+		(score > 0 ? -1.0f : pillar->GetTopRightPoint().x + stickLength - m_pCharacter->getPosition().x);
 
-	m_pCharacter->MoveToTarget(
-		nextPillar->GetTopRightPoint().x - m_pCharacter->getContentSize().width / 2 - m_pCharacter->getPosition().x - 5,
-		(score > 0 ? -1.0f : pillar->GetTopRightPoint().x + stickLength - m_pCharacter->getPosition().x));
+	m_pCharacter->MoveToTarget(nextPillar->GetTopRightPoint().x - m_pCharacter->getContentSize().width / 2 - m_pCharacter->getPosition().x - 5,
+		fallingDistance);
 
 	nextPillar->RemoveRect();
 
-	auto scale = m_pPlatform->MoveAndCalculateScale();
+	auto scale = m_pPlatform->MoveAndCalculateScale((m_pCharacter->GetState()==CS_ABOUT_TO_FALL)?fallingDistance:-1.0f);
 	if (scale > 0) {
 		m_pZoomingLayer->runAction(ScaleTo::create(1.0f, scale));
 		m_pZoomingLayer2->runAction(ScaleTo::create(1.0f, Utils::map(scale, 0.0f, 1.0f, 0.75f, 1.0f)));
